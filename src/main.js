@@ -2,6 +2,8 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const { PubSub } = require('@google-cloud/pubsub')
 
+const storage = require('electron-json-storage')
+
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 // eslint-disable-next-line global-require
 if (require('electron-squirrel-startup')) {
@@ -15,6 +17,7 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
+      enableRemoteModule: true,
       // eslint-disable-next-line no-undef
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
@@ -104,6 +107,20 @@ app.whenReady().then(() => {
 
     subs[subName].inst.on('message', subs[subName].handler)
   })
+
+  ipcMain.handle(
+    'storage-get',
+    (evt, key) =>
+      new Promise((resolve, reject) => {
+        storage.get(key, (error, data) => {
+          if (error) {
+            return reject(error)
+          }
+          resolve(data)
+        })
+      }),
+  )
+  ipcMain.handle('storage-set', (evt, key, data) => storage.set(key, data))
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

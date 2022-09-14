@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 
 import { produce } from 'immer'
@@ -12,13 +12,50 @@ import {
   Typography,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
+import HistoryIcon from '@mui/icons-material/History'
 import { send as topicSend } from '../api/topics'
 import BasePane from './BasePane'
+import TopicHistory from './TopicHistoryDrawer'
+
+import * as storage from '../api/storage'
+
+const useTabHistory = (tabName) => {
+  const fileName = `${tabName}-history.json`
+  const [state, setState] = useState([])
+  useEffect(() => {
+    storage.get(fileName).then((hist) => {
+      if (hist.length > 0) {
+        setState(hist)
+      }
+    })
+  }, [fileName])
+
+  const addItem = (payload, attrs) => {
+    const id = `history-${parseInt(Math.random() * 1000000, 10)}`
+    const newItem = { id, payload, attrs }
+    const newState = [...state, newItem]
+    setState(newState)
+    storage.set(fileName, newState)
+  }
+  const deleteItem = (idx) => {
+    const newState = state.slice(idx, idx + 1)
+    setState(newState)
+    storage.set(fileName, newState)
+  }
+  const clearHistory = () => {
+    setState([])
+    storage.set(fileName, [])
+  }
+
+  return [state, addItem, deleteItem, clearHistory]
+}
 
 export default function TopicPane({ tab, active }) {
+  const [history, addToHistory, , clearHistory] = useTabHistory(tab.name)
   const [text, setText] = useState('{}')
   const [attrs, setAttributes] = useState([])
   const [error, setError] = useState(null)
+  const [historyOpen, setHistoryOpen] = useState(false)
 
   const send = useCallback(
     (payload) => {
@@ -33,8 +70,9 @@ export default function TopicPane({ tab, active }) {
           {},
         ),
       )
+      addToHistory(payload, attrs)
     },
-    [tab.name],
+    [tab.name, addToHistory],
   )
 
   const submit = (e) => {
@@ -49,13 +87,15 @@ export default function TopicPane({ tab, active }) {
     }
   }
 
-  const format = () => {
+  const formatAndSave = (rawText) => {
     try {
-      const json = JSON.parse(text)
+      const json = JSON.parse(rawText)
       const formatted = JSON.stringify(json, null, 2)
       setText(formatted)
+      return true
     } catch (e) {
       setError(e)
+      return false
     }
   }
 
@@ -100,9 +140,20 @@ export default function TopicPane({ tab, active }) {
               multiline
               fullWidth
             />
-            <Box textAlign="right" mt={2}>
-              <Button onClick={format}>Format</Button>
-              <Button type="submit">Send</Button>
+            <Box display="flex" justifyContent="space-between" mt={2}>
+              <Box>
+                <IconButton
+                  size="small"
+                  onClick={() => setHistoryOpen(true)}
+                  disabled={history.length === 0}
+                >
+                  <HistoryIcon />
+                </IconButton>
+              </Box>
+              <Box>
+                <Button onClick={() => formatAndSave(text)}>Format</Button>
+                <Button type="submit">Send</Button>
+              </Box>
             </Box>
           </Box>
           <Box flexBasis="300px" p="0 8px 0 8px">
@@ -122,6 +173,19 @@ export default function TopicPane({ tab, active }) {
         </Box>
         {error && <FormHelperText error>{error.message}</FormHelperText>}
       </form>
+      <TopicHistory
+        open={historyOpen}
+        history={history}
+        onClose={() => setHistoryOpen(false)}
+        onClearHistory={() => clearHistory()}
+        onLoadHistoryItem={(item) => {
+          if (!formatAndSave(JSON.stringify(item.payload))) {
+            setText(item.payload)
+          }
+          setAttributes(item.attrs)
+          setHistoryOpen(false)
+        }}
+      />
     </BasePane>
   )
 }

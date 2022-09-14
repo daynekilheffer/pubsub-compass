@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
 
 export default function BasePane({ children }) {
@@ -7,4 +8,7 @@ export default function BasePane({ children }) {
       {children}
     </Box>
   )
+}
+BasePane.propTypes = {
+  children: PropTypes.element,
 }
