@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, useTheme } from '@mui/material'
 import React from 'react'
 
 export default function Frame({ children }) {
@@ -10,9 +10,23 @@ export default function Frame({ children }) {
 }
 
 export function Rail({ children }) {
-  return <Box maxWidth={400}>{children}</Box>
+  const { palette } = useTheme()
+  return (
+    <Box
+      maxWidth={400}
+      backgroundColor="background.default"
+      borderRight="1px solid"
+      borderColor={palette.secondary.light}
+    >
+      {children}
+    </Box>
+  )
 }
 
 export function Main({ children }) {
-  return <Box>{children}</Box>
+  return (
+    <Box paddingLeft={1} paddingRight={1}>
+      {children}
+    </Box>
+  )
 }

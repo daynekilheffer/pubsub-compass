@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   LinearProgress,
   Table,
@@ -11,13 +10,14 @@ import {
 } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
-import { watch } from './api/subscriptions'
-import { useTabActivityIndicator } from './TabManager'
+import { watch } from '../api/subscriptions'
+import { useTabActivityIndicator } from '../TabManager'
+import BasePane from './BasePane'
 
-export default function Pane({ tab, active = false }) {
+export default function SubscriptionPane({ tab, active = false }) {
   const [watching, setWatching] = useState(false)
   const [messages, setMessages] = useState([])
-  const toggleActivity = useTabActivityIndicator(tab.name)
+  const toggleActivity = useTabActivityIndicator(tab.id)
 
   useEffect(() => {
     if (watching) {
@@ -74,17 +74,18 @@ export default function Pane({ tab, active = false }) {
   }
 
   return (
-    <Box>
+    <BasePane>
       <Button onClick={() => setWatching((val) => !val)}>
         {watching ? 'Stop watching' : 'Watch subscription'}
       </Button>
       {watching && <LinearProgress />}
       {table}
-    </Box>
+    </BasePane>
   )
 }
-Pane.propTypes = {
+SubscriptionPane.propTypes = {
   tab: PropTypes.shape({
+    id: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,
   }).isRequired,
   active: PropTypes.bool,

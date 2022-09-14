@@ -2,35 +2,44 @@ import React, { useCallback, useContext, useMemo, useState } from 'react'
 
 const ctx = React.createContext(null)
 
+// TODO switch all "byName" functions to "byId"
+
+export const TAB_TYPES = {
+  subscription: 'sub',
+  topic: 'topic',
+}
+
 export default function TabManager({ children }) {
   const [tabs, setTabs] = useState([])
 
-  const selectTab = useCallback((name) => {
+  const selectTab = useCallback((id) => {
     setTabs((state) =>
       state.map((tb) => ({
         ...tb,
-        selected: tb.name === name,
+        selected: tb.id === id,
       })),
     )
   }, [])
-  const addTab = useCallback((name) => {
+  const addTab = useCallback((name, type) => {
     setTabs((state) => {
       const newTabs = [...state]
-      const tab = newTabs.find((t) => t.name === name)
+      let tab = newTabs.find((t) => t.name === name && t.type === type)
       if (!tab) {
-        newTabs.push({ name })
+        const newId = `${type}-${name}`
+        tab = { id: newId, name, type }
+        newTabs.push(tab)
       }
 
       return newTabs.map((tb) => ({
         ...tb,
-        selected: tb.name === name,
+        selected: tb.id === tab.id,
       }))
     })
   }, [])
-  const toggleActivity = useCallback((name, hasActivity) => {
+  const toggleActivity = useCallback((id, hasActivity) => {
     setTabs((state) => {
       const newTabs = [...state]
-      const tab = newTabs.find((t) => t.name === name)
+      const tab = newTabs.find((t) => t.id === id)
       if (!tab) {
         return
       }
@@ -50,7 +59,7 @@ export default function TabManager({ children }) {
 
 export const useTabManager = () => {
   const c = useContext(ctx)
-  const add = useCallback((name) => c.addTab(name), [])
+  const add = useCallback((name, type) => c.addTab(name, type), [])
   return [add]
 }
 
@@ -62,15 +71,15 @@ export const useTabs = () => {
 export const useSelectedTab = () => {
   const c = useContext(ctx)
   const tabs = useTabs()
-  const select = useCallback((name) => c.selectTab(name), [])
-  return [tabs.find((t) => t.selected === true), select]
+  const select = useCallback((id) => c.selectTab(id), [])
+  return [tabs.find((t) => t.selected), select]
 }
-export const useTabActivityIndicator = (name) => {
+export const useTabActivityIndicator = (id) => {
   const { toggleActivity } = useContext(ctx)
   return useCallback(
     (hasActivity) => {
-      toggleActivity(name, hasActivity)
+      toggleActivity(id, hasActivity)
     },
-    [name],
+    [id],
   )
 }

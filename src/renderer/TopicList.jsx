@@ -1,45 +1,47 @@
 import React, { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import {
+  Box,
   List,
-  ListSubheader,
   ListItemButton,
   ListItemText,
+  Typography,
 } from '@mui/material'
-import { useTabManager } from './TabManager'
+import { useTabManager, TAB_TYPES } from './TabManager'
 
 function TopicList({ topics }) {
   const [add] = useTabManager()
+
   return (
-    <List
-      component="nav"
-      subheader={
-        <ListSubheader component="div" id="nested-list-subheader">
+    <>
+      <Box p={2} pb={0}>
+        <Typography component="h2" variant="h5">
           Topics
-        </ListSubheader>
-      }
-    >
-      {topics.map((t) => (
-        <Fragment key={t.name}>
-          <ListItemButton>
-            <ListItemText primary={t.name} />
-          </ListItemButton>
-          {t.subscriptions.length > 0 && (
-            <List>
-              {t.subscriptions.map((s) => (
-                <ListItemButton
-                  key={s.name}
-                  sx={{ pl: 5 }}
-                  onClick={() => add(s.name)}
-                >
-                  <ListItemText primary={s.name} />
-                </ListItemButton>
-              ))}
-            </List>
-          )}
-        </Fragment>
-      ))}
-    </List>
+        </Typography>
+      </Box>
+      <List component="nav">
+        {topics.map((t) => (
+          <Fragment key={t.name}>
+            <ListItemButton onClick={() => add(t.name, TAB_TYPES.topic)}>
+              <ListItemText primary={t.name} />
+            </ListItemButton>
+            {t.subscriptions.length > 0 && (
+              <List>
+                {t.subscriptions.map((s) => (
+                  <ListItemButton
+                    key={s.name}
+                    sx={{ pl: 5 }}
+                    onClick={() => add(s.name, TAB_TYPES.subscription)}
+                  >
+                    <ListItemText primary={s.name} />
+                  </ListItemButton>
+                ))}
+              </List>
+            )}
+          </Fragment>
+        ))}
+      </List>
+    </>
   )
 }
 TopicList.propTypes = {

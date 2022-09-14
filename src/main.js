@@ -59,6 +59,12 @@ app.whenReady().then(() => {
       )
     }),
   )
+  ipcMain.handle('send-to-topic', async (evt, name, payload, attrs = {}) =>
+    pubsub.topic(name).publishMessage({
+      json: payload,
+      attributes: attrs,
+    }),
+  )
   ipcMain.on('stop-watch', (evt, subName) => {
     console.log('received stop event', subName)
     if (!subs[subName]) {

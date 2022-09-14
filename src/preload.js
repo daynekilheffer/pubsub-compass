@@ -9,6 +9,8 @@ const callbacks = {}
 
 contextBridge.exposeInMainWorld('electronAPI', {
   listTopics: () => ipcRenderer.invoke('list-topics'),
+  sendToTopic: (name, payload, attrs) =>
+    ipcRenderer.invoke('send-to-topic', name, payload, attrs),
   watchSubscription: (name) => ipcRenderer.invoke('watch', name),
   onSubscribedMessage: (name, cb) => {
     if (!hasSubbed) {
