@@ -65,6 +65,13 @@ app.whenReady().then(() => {
       attributes: attrs,
     }),
   )
+  ipcMain.handle('reset-subscriptions', () => {
+    console.log('resetting subscriptions')
+    Object.keys(subs).forEach((subName) => {
+      subs[subName].inst.close()
+      delete subs[subName]
+    })
+  })
   ipcMain.on('stop-watch', (evt, subName) => {
     console.log('received stop event', subName)
     if (!subs[subName]) {

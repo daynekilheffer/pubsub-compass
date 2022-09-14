@@ -3,6 +3,7 @@ import { CssBaseline } from '@mui/material'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 
 import { list } from './api/topics'
+import { reset } from './api/subscriptions'
 
 import TopicList from './TopicList'
 import Frame, { Rail, Main } from './Structure'
@@ -36,6 +37,10 @@ function App() {
   const [topics, setTopics] = useState([])
   useEffect(() => {
     list().then((t) => setTopics(t))
+  }, [])
+
+  useEffect(() => {
+    reset()
   }, [])
 
   return (

@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   sendToTopic: (name, payload, attrs) =>
     ipcRenderer.invoke('send-to-topic', name, payload, attrs),
   watchSubscription: (name) => ipcRenderer.invoke('watch', name),
+  resetSubscriptions: (name) => ipcRenderer.invoke('reset-subscriptions', name),
   onSubscribedMessage: (name, cb) => {
     if (!hasSubbed) {
       ipcRenderer.on('subscribed-message', (evt, val) => {

@@ -7,3 +7,5 @@ export const watch = (subName, listener) => {
   })
   return () => window.electronAPI.stopSubscriptionWatch(subName)
 }
+
+export const reset = () => window.electronAPI.resetSubscriptions()
