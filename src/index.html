@@ -2,11 +2,13 @@
 <html>
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self' 'unsafe-eval';
+    style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src https://fonts.gstatic.com;
+    ">
     <title>Pub/Sub Compass</title>
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-    />
+    <style href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"></style>
   </head>
   <body>
     <main id="app"></main>
