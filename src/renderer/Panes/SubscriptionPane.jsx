@@ -31,11 +31,14 @@ export default function SubscriptionPane({ tab, active = false }) {
           },
           ...msgs,
         ])
-        toggleActivity(true)
+        // this stops and restarts the watcher a lot as we jump tabs, would rather it didn't :thinking:
+        if (!active) {
+          toggleActivity(true)
+        }
       }
       return watch(tab.name, listener)
     }
-  }, [watching, toggleActivity])
+  }, [active, watching, toggleActivity])
 
   useEffect(() => {
     if (active) {
