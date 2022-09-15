@@ -13,8 +13,9 @@ if (require('electron-squirrel-startup')) {
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1240,
+    height: 800,
+    title: 'Pub/Sub Compass',
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
@@ -28,7 +29,7 @@ const createWindow = () => {
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   return mainWindow
 }
 

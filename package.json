@@ -2,7 +2,7 @@
   "name": "pubsub-compass",
   "productName": "pubsub-compass",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "a pub/sub GUI emulating Mongo Compass",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -19,13 +19,18 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "images/pubsub"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
             "name": "pubsub_compass"
           }
+        },
+        {
+          "name": "@electron-forge/maker-dmg"
         },
         {
           "name": "@electron-forge/maker-zip",
@@ -89,6 +94,7 @@
     "style-loader": "^3.3.1"
   },
   "dependencies": {
+    "@electron-forge/maker-dmg": "^6.0.0-beta.66",
     "@electron/remote": "^2.0.8",
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
