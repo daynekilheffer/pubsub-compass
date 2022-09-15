@@ -30,6 +30,7 @@ export default function Tabs() {
           key={tab.id}
           icon={
             <IconButton
+              component="span"
               size="small"
               onClick={(e) => e.stopPropagation() || deleteTab(tab.id)}
             >

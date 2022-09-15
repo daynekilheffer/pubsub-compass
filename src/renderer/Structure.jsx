@@ -1,9 +1,9 @@
-import { Box, useTheme } from '@mui/material'
+import { Box, Drawer, useTheme } from '@mui/material'
 import React from 'react'
 
 export default function Frame({ children }) {
   return (
-    <Box display="grid" gridTemplateColumns="400px 1fr">
+    <Box display="grid" gridTemplateColumns="320px 1fr">
       {children}
     </Box>
   )
@@ -12,14 +12,21 @@ export default function Frame({ children }) {
 export function Rail({ children }) {
   const { palette } = useTheme()
   return (
-    <Box
-      maxWidth={400}
-      backgroundColor="background.default"
-      borderRight="1px solid"
-      borderColor={palette.secondary.light}
+    <Drawer
+      variant="permanent"
+      anchor="left"
+      sx={{
+        width: 320,
+      }}
+      PaperProps={{
+        sx: {
+          backgroundColor: palette.background.default,
+          maxWidth: 320,
+        },
+      }}
     >
       {children}
-    </Box>
+    </Drawer>
   )
 }
 

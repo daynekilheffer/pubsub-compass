@@ -10,5 +10,5 @@ export default function BasePane({ children }) {
   )
 }
 BasePane.propTypes = {
-  children: PropTypes.element,
+  children: PropTypes.node,
 }

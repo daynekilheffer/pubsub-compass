@@ -26,6 +26,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
     delete callbacks[name]
     ipcRenderer.send('stop-watch', name)
   },
+  setActivity: (activity) => {
+    ipcRenderer.send('set-activity', activity)
+  },
 
   storage: {
     set: (key, data) => ipcRenderer.invoke('storage-set', key, data),

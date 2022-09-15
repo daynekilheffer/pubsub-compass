@@ -109,6 +109,11 @@ app.whenReady().then(() => {
     subs[subName].inst.on('message', subs[subName].handler)
   })
 
+  ipcMain.on('set-activity', (evt, activity) => {
+    console.log('setting activity', activity)
+    app.setBadgeCount(activity ? undefined : 0)
+  })
+
   ipcMain.handle(
     'storage-get',
     (evt, key) =>

@@ -6,6 +6,7 @@ import React, {
   useState,
 } from 'react'
 import * as storage from './api/storage'
+import * as app from './api/app'
 
 const ctx = React.createContext(null)
 
@@ -17,9 +18,11 @@ export const TAB_TYPES = {
 export default function TabManager({ children }) {
   const [tabs, setTabs] = useState([])
 
+  const hasAnyActivity = tabs.some((t) => t.activity)
+
   useEffect(() => {
     storage.get('tabs.json').then((storageTabs) => {
-      if (!storageTabs.length) {
+      if (storageTabs.length === undefined) {
         return
       }
       setTabs(storageTabs)
@@ -29,6 +32,10 @@ export default function TabManager({ children }) {
   useEffect(() => {
     storage.set('tabs.json', tabs)
   }, [tabs])
+
+  useEffect(() => {
+    app.setActivity(hasAnyActivity)
+  }, [hasAnyActivity])
 
   const selectTab = useCallback((id) => {
     setTabs((state) =>
