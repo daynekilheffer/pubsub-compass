@@ -196,7 +196,7 @@ TopicPane.propTypes = {
   active: PropTypes.bool,
 }
 
-function Attribute({ attrKey, value, onChange, onDelete }) {
+function Attribute({ attrKey = '', value = '', onChange, onDelete }) {
   return (
     <Box display="inline-flex" m="0 0 4px 0">
       <TextField
@@ -222,4 +222,10 @@ function Attribute({ attrKey, value, onChange, onDelete }) {
       </IconButton>
     </Box>
   )
+}
+Attribute.propTypes = {
+  attrKey: PropTypes.string,
+  value: PropTypes.string,
+  onChange: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
 }
