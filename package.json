@@ -1,7 +1,7 @@
 {
   "name": "pubsub-compass",
   "productName": "pubsub-compass",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "a pub/sub GUI emulating Mongo Compass",
   "main": ".webpack/main",
   "scripts": {
