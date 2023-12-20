@@ -10,13 +10,19 @@ import {
 } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
 
+type HistoryItem = {
+  id: string
+  payload: any
+  attrs: { key: string; value: string }[]
+}
+
 export default function TopicHistoryDrawer({
   open,
   onClose,
   history,
   onClearHistory,
   onLoadHistoryItem,
-}) {
+}: { open: boolean; onClose: () => void; history: HistoryItem[]; onClearHistory: () => void; onLoadHistoryItem: (h: any) => void }) {
   return (
     <Drawer
       PaperProps={{
@@ -58,7 +64,4 @@ export default function TopicHistoryDrawer({
       )}
     </Drawer>
   )
-}
-TopicHistoryDrawer.propTypes = {
-  history: PropTypes.arrayOf(PropTypes.shape({})),
 }

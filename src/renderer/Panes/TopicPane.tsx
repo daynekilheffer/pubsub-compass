@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React, { useCallback, useState, useEffect, FormEventHandler } from 'react'
 import PropTypes from 'prop-types'
 
 import { produce } from 'immer'
@@ -18,26 +18,27 @@ import BasePane from './BasePane'
 import TopicHistory from './TopicHistoryDrawer'
 
 import * as storage from '../api/storage'
+import { HistoryItem, TabData } from '../api'
 
-const useTabHistory = (tabName) => {
+const useTabHistory = (tabName: string) => {
   const fileName = `${tabName}-history.json`
-  const [state, setState] = useState([])
+  const [state, setState] = useState<HistoryItem[]>([])
   useEffect(() => {
-    storage.get(fileName).then((hist) => {
+    storage.get<HistoryItem[]>(fileName).then((hist) => {
       if (hist.length > 0) {
         setState(hist)
       }
     })
   }, [fileName])
 
-  const addItem = (payload, attrs) => {
-    const id = `history-${parseInt(Math.random() * 1000000, 10)}`
+  const addItem = (payload: HistoryItem["payload"], attrs: HistoryItem["attrs"]) => {
+    const id = `history-${Math.floor(Math.random() * 1000000)}`
     const newItem = { id, payload, attrs }
     const newState = [...state, newItem]
     setState(newState)
     storage.set(fileName, newState)
   }
-  const deleteItem = (idx) => {
+  const deleteItem = (idx: number) => {
     const newState = state.slice(idx, idx + 1)
     setState(newState)
     storage.set(fileName, newState)
@@ -47,22 +48,22 @@ const useTabHistory = (tabName) => {
     storage.set(fileName, [])
   }
 
-  return [state, addItem, deleteItem, clearHistory]
+  return [state, addItem, deleteItem, clearHistory] as const
 }
 
-export default function TopicPane({ tab, active }) {
+export default function TopicPane({ tab, active }: { tab: TabData; active: boolean }) {
   const [history, addToHistory, , clearHistory] = useTabHistory(tab.name)
   const [text, setText] = useState('{}')
-  const [attrs, setAttributes] = useState([])
-  const [error, setError] = useState(null)
+  const [attrs, setAttributes] = useState<{ key: string, value: string }[]>([])
+  const [error, setError] = useState<Error | null>(null)
   const [historyOpen, setHistoryOpen] = useState(false)
 
   const send = useCallback(
-    (payload) => {
+    (payload: any) => {
       topicSend(
         tab.name,
         payload,
-        attrs.reduce(
+        attrs.reduce<Record<string, string>>(
           (result, attr) => ({
             ...result,
             [attr.key]: attr.value,
@@ -75,7 +76,7 @@ export default function TopicPane({ tab, active }) {
     [tab.name, addToHistory],
   )
 
-  const submit = (e) => {
+  const submit: FormEventHandler<HTMLFormElement> = (e) => {
     setError(null)
     e.preventDefault()
     let json
@@ -83,32 +84,32 @@ export default function TopicPane({ tab, active }) {
       json = JSON.parse(text)
       send(json)
     } catch (err) {
-      setError(err)
+      setError(err as Error)
     }
   }
 
-  const formatAndSave = (rawText) => {
+  const formatAndSave = (rawText: string) => {
     try {
       const json = JSON.parse(rawText)
       const formatted = JSON.stringify(json, null, 2)
       setText(formatted)
       return true
     } catch (e) {
-      setError(e)
+      setError(e as Error)
       return false
     }
   }
 
   const onAddAttribute = () => setAttributes([...attrs, { key: '', value: '' }])
 
-  const onAttributeChange = (idx) => (key, value) =>
+  const onAttributeChange = (idx: number) => (key: string, value: string) =>
     setAttributes(
       produce((draft) => {
         // eslint-disable-next-line no-param-reassign
         draft[idx] = { key, value }
       }),
     )
-  const onDeleteAttribute = (idx) => () =>
+  const onDeleteAttribute = (idx: number) => () =>
     setAttributes(
       produce((draft) => {
         // eslint-disable-next-line no-param-reassign
@@ -120,7 +121,7 @@ export default function TopicPane({ tab, active }) {
     return null
   }
   return (
-    <BasePane pt={3}>
+    <BasePane>
       <form onSubmit={submit}>
         <Box display="flex">
           <Box flexGrow={1} pr={2}>
@@ -189,14 +190,13 @@ export default function TopicPane({ tab, active }) {
     </BasePane>
   )
 }
-TopicPane.propTypes = {
-  tab: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-  active: PropTypes.bool,
-}
 
-function Attribute({ attrKey = '', value = '', onChange, onDelete }) {
+function Attribute({ attrKey = '', value = '', onChange, onDelete }: {
+  attrKey?: string
+  value?: string
+  onChange: (key: string, value: string) => void
+  onDelete: () => void
+}) {
   return (
     <Box display="inline-flex" m="0 0 4px 0">
       <TextField

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import produce from 'immer'
 import {
   Autocomplete,
@@ -16,12 +16,13 @@ import {
   Typography,
 } from '@mui/material'
 import { Settings } from '@mui/icons-material'
-import PropTypes from 'prop-types'
 import { watch } from '../api/subscriptions'
 import { useTabActivityIndicator } from '../TabManager'
 import BasePane from './BasePane'
+import { receivedMessage } from 'src/ipc-api'
+import { TabData } from '../api'
 
-const walk = (json, path) => {
+const walk = (json: any, path: string): unknown => {
   const parts = path.split('.')
   const subJson = json[parts[0]]
   if (parts.length > 1) {
@@ -29,17 +30,17 @@ const walk = (json, path) => {
   }
   return subJson
 }
-const extractData = (msg, accessor) => {
+const extractData = (msg: parsedMessage, accessor: string) => {
   if (accessor.startsWith('data: ')) {
-    return walk(msg.data, accessor.substr(6))
+    return walk(msg.data, accessor.substring(6))
   }
   if (accessor.startsWith('attr: ')) {
-    return walk(msg.attrs, accessor.substr(6))
+    return walk(msg.attrs, accessor.substring(6))
   }
 }
 
-const extractNested = (obj) => {
-  let output = []
+const extractNested = (obj: object) => {
+  let output: any[] = []
   Object.entries(obj).forEach(([key, val]) => {
     if (typeof val === 'object' && !Array.isArray(val)) {
       output = [...output, ...extractNested(val).map((p) => `${key}.${p}`)]
@@ -48,21 +49,33 @@ const extractNested = (obj) => {
   })
   return output
 }
-const extractPaths = (obj) => [
+const extractPaths = (obj: parsedMessage) => [
   ...extractNested(obj.data).map((p) => `data: ${p}`),
   ...extractNested(obj.attrs).map((p) => `attr: ${p}`),
 ]
 
-export default function SubscriptionPane({ tab, active = false }) {
+type parsedMessage = {
+  id: string
+  data: object
+  published: Date
+  attrs: Record<string, string>
+}
+
+type Settings = {
+  fields: string[]
+  editFields: string[]
+}
+
+export default function SubscriptionPane({ tab, active = false }: { tab: TabData, active?: boolean }) {
   const [watching, setWatching] = useState(false)
-  const [messages, setMessages] = useState([])
-  const [settings, setSettings] = useState({ fields: [], editFields: [] })
+  const [messages, setMessages] = useState<parsedMessage[]>([])
+  const [settings, setSettings] = useState<Settings>({ fields: [], editFields: [] })
   const [editingSettings, setEditingSettings] = useState(false)
   const toggleActivity = useTabActivityIndicator(tab.id)
 
   useEffect(() => {
     if (watching) {
-      const listener = (msg) => {
+      const listener = (msg: receivedMessage) => {
         setMessages((msgs) => [
           {
             id: msg.id,
@@ -101,8 +114,8 @@ export default function SubscriptionPane({ tab, active = false }) {
     return null
   }
 
-  let cols = []
-  let suggestedValues = []
+  let cols: string[] = []
+  let suggestedValues: string[] = []
   if (messages.length > 0) {
     cols = [
       ...Object.keys(messages[0].data).map((d) => `data: ${d}`),
@@ -200,15 +213,8 @@ export default function SubscriptionPane({ tab, active = false }) {
     </BasePane>
   )
 }
-SubscriptionPane.propTypes = {
-  tab: PropTypes.shape({
-    id: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
-  }).isRequired,
-  active: PropTypes.bool,
-}
 
-function SettingsField({ value, allowedValues, onChange }) {
+const SettingsField = ({ value, allowedValues, onChange }: { value: string, allowedValues: string[], onChange: (msg: string) => void }) => {
   return (
     <Box mb={1}>
       <Autocomplete
@@ -222,7 +228,7 @@ function SettingsField({ value, allowedValues, onChange }) {
         value={value}
         onChange={(evt, val, reason) => {
           if (reason === 'createOption' || reason === 'selectOption') {
-            onChange(val)
+            onChange(val ?? '')
           }
           if (reason === 'clear') {
             onChange('')

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CssBaseline } from '@mui/material'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 
@@ -10,6 +10,7 @@ import Frame, { Rail, Main } from './Structure'
 import TabManager from './TabManager'
 import Tabs from './Tabs'
 import Panes from './Panes'
+import { TopicHierarchy } from 'src/ipc-api'
 
 const theme = createTheme({
   palette: {
@@ -34,7 +35,7 @@ const theme = createTheme({
 })
 
 function App() {
-  const [topics, setTopics] = useState([])
+  const [topics, setTopics] = useState<TopicHierarchy[]>([])
   useEffect(() => {
     list().then((t) => setTopics(t))
   }, [])

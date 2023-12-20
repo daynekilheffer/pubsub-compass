@@ -1,7 +1,6 @@
 import { Box, Drawer, useTheme } from '@mui/material'
-import React from 'react'
 
-export default function Frame({ children }) {
+export default function Frame({ children }: { children: React.ReactNode }) {
   return (
     <Box display="grid" gridTemplateColumns="320px 1fr">
       {children}
@@ -9,7 +8,7 @@ export default function Frame({ children }) {
   )
 }
 
-export function Rail({ children }) {
+export function Rail({ children }: { children: React.ReactNode }) {
   const { palette } = useTheme()
   return (
     <Drawer
@@ -30,7 +29,7 @@ export function Rail({ children }) {
   )
 }
 
-export function Main({ children }) {
+export function Main({ children }: { children: React.ReactNode }) {
   return (
     <Box paddingLeft={1} paddingRight={1}>
       {children}

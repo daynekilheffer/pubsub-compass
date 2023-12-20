@@ -7,21 +7,29 @@ import React, {
 } from 'react'
 import * as storage from './api/storage'
 import * as app from './api/app'
+import { TabData, TabType } from './api';
 
-const ctx = React.createContext(null)
+type ContextValue = {
+  tabs: TabData[];
+  addTab: (name: string, type: TabType) => void;
+  deleteTab: (id: string) => void;
+  selectTab: (id: string) => void;
+  toggleActivity: (id: string, hasActivity: boolean) => void;
+}
+const ctx = React.createContext<ContextValue>(null!)
 
 export const TAB_TYPES = {
   subscription: 'sub',
   topic: 'topic',
-}
+} as const
 
-export default function TabManager({ children }) {
-  const [tabs, setTabs] = useState([])
+export default function TabManager({ children }: { children: React.ReactNode }) {
+  const [tabs, setTabs] = useState<TabData[]>([])
 
   const hasAnyActivity = tabs.some((t) => t.activity)
 
   useEffect(() => {
-    storage.get('tabs.json').then((storageTabs) => {
+    storage.get<TabData[]>('tabs.json').then((storageTabs) => {
       if (storageTabs.length === undefined) {
         return
       }
@@ -37,7 +45,7 @@ export default function TabManager({ children }) {
     app.setActivity(hasAnyActivity)
   }, [hasAnyActivity])
 
-  const selectTab = useCallback((id) => {
+  const selectTab = useCallback((id: string) => {
     setTabs((state) =>
       state.map((tb) => ({
         ...tb,
@@ -45,31 +53,32 @@ export default function TabManager({ children }) {
       })),
     )
   }, [])
-  const addTab = useCallback((name, type) => {
+  const addTab = useCallback((name: string, type: TabType) => {
     setTabs((state) => {
       const newTabs = [...state]
       let tab = newTabs.find((t) => t.name === name && t.type === type)
-      if (!tab) {
+      if (tab === undefined) {
         const newId = `${type}-${name}`
         tab = { id: newId, name, type }
         newTabs.push(tab)
       }
+      const id = tab.id
 
       return newTabs.map((tb) => ({
         ...tb,
-        selected: tb.id === tab.id,
+        selected: tb.id === id,
       }))
     })
   }, [])
-  const deleteTab = useCallback((id) => {
+  const deleteTab = useCallback((id: string) => {
     setTabs((state) => state.filter((t) => t.id !== id))
   }, [])
-  const toggleActivity = useCallback((id, hasActivity) => {
+  const toggleActivity = useCallback((id: string, hasActivity: boolean) => {
     setTabs((state) => {
       const newTabs = [...state]
       const tab = newTabs.find((t) => t.id === id)
       if (!tab) {
-        return
+        return state
       }
       tab.activity = hasActivity
       return newTabs
@@ -91,9 +100,9 @@ export default function TabManager({ children }) {
 
 export const useTabManager = () => {
   const c = useContext(ctx)
-  const add = useCallback((name, type) => c.addTab(name, type), [])
-  const del = useCallback((id) => c.deleteTab(id), [])
-  return [add, del]
+  const add = useCallback((name: string, type: TabType) => c.addTab(name, type), [])
+  const del = useCallback((id: string) => c.deleteTab(id), [])
+  return [add, del] as const
 }
 
 export const useTabs = () => {
@@ -103,13 +112,13 @@ export const useTabs = () => {
 
 export const useSelectTab = () => {
   const c = useContext(ctx)
-  const select = useCallback((id) => c.selectTab(id), [])
+  const select = useCallback((id: string) => c.selectTab(id), [])
   return select
 }
-export const useTabActivityIndicator = (id) => {
+export const useTabActivityIndicator = (id: string) => {
   const { toggleActivity } = useContext(ctx)
   return useCallback(
-    (hasActivity) => {
+    (hasActivity: boolean) => {
       toggleActivity(id, hasActivity)
     },
     [id],

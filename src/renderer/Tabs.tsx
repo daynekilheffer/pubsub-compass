@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ComponentProps } from 'react'
 import { Box, IconButton, Tab, Tabs as MuiTabs } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useSelectTab, useTabManager, useTabs } from './TabManager'
@@ -11,7 +11,7 @@ export default function Tabs() {
     return null
   }
 
-  let selectedIdx = tabs.findIndex((t) => t.selected === true)
+  let selectedIdx: number | false = tabs.findIndex((t) => t.selected === true)
   if (selectedIdx === -1) {
     selectedIdx = false
   }
@@ -32,7 +32,10 @@ export default function Tabs() {
             <IconButton
               component="span"
               size="small"
-              onClick={(e) => e.stopPropagation() || deleteTab(tab.id)}
+              onClick={(e) => {
+                e.stopPropagation()
+                deleteTab(tab.id)
+              }}
             >
               <CloseIcon />
             </IconButton>
@@ -45,7 +48,7 @@ export default function Tabs() {
                 <Box
                   display="inline-block"
                   borderRadius="50%"
-                  backgroundColor="info.light"
+                  bgcolor="info.light"
                   p={0.5}
                   ml={0.2}
                 />
