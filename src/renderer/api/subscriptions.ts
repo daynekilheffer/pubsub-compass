@@ -1,8 +1,9 @@
-import { receivedMessage } from "src/ipc-api"
+import { receivedMessage } from "../../ipc-api"
+
+export type { receivedMessage }
 
 type messageListener = (message: receivedMessage) => void
 
-let hasSubbed = false
 const subMsgCallbacks: Record<string, messageListener> = {}
 
 window.electronAPI.on.subscribedMessage((evt, msg) => {

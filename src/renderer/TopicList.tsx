@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import { Fragment } from 'react'
 import PropTypes from 'prop-types'
 import {
   Box,
@@ -8,8 +8,9 @@ import {
   Typography,
 } from '@mui/material'
 import { useTabManager, TAB_TYPES } from './TabManager'
+import { TopicHierarchy } from './api/topics'
 
-function TopicList({ topics }) {
+function TopicList({ topics }: { topics: TopicHierarchy[] }) {
   const [add] = useTabManager()
 
   return (

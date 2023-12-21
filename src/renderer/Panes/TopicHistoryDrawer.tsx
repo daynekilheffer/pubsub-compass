@@ -1,20 +1,11 @@
-import React from 'react'
-import PropTypes from 'prop-types'
 import {
   Button,
   Drawer,
-  IconButton,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
 } from '@mui/material'
-import SearchIcon from '@mui/icons-material/Search'
-
-type HistoryItem = {
-  id: string
-  payload: any
-  attrs: { key: string; value: string }[]
-}
+import { HistoryItem } from '../api'
 
 export default function TopicHistoryDrawer({
   open,
@@ -22,7 +13,7 @@ export default function TopicHistoryDrawer({
   history,
   onClearHistory,
   onLoadHistoryItem,
-}: { open: boolean; onClose: () => void; history: HistoryItem[]; onClearHistory: () => void; onLoadHistoryItem: (h: any) => void }) {
+}: { open: boolean; onClose: () => void; history: HistoryItem[]; onClearHistory: () => void; onLoadHistoryItem: (h: HistoryItem) => void }) {
   return (
     <Drawer
       PaperProps={{
@@ -34,18 +25,10 @@ export default function TopicHistoryDrawer({
     >
       <List>
         {history.reverse().map((h) => (
-          <ListItem
+          <ListItemButton
             key={h.id}
             dense
-            secondaryAction={
-              <IconButton
-                edge="end"
-                size="small"
-                onClick={() => onLoadHistoryItem(h)}
-              >
-                <SearchIcon />
-              </IconButton>
-            }
+            onClick={() => onLoadHistoryItem(h)}
           >
             <ListItemText
               secondary={
@@ -56,7 +39,7 @@ export default function TopicHistoryDrawer({
             >
               {JSON.stringify(h.payload, null, 1)}
             </ListItemText>
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
       {history.length > 0 && (

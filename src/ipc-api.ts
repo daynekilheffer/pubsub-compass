@@ -1,21 +1,25 @@
-import { PubSub } from "@google-cloud/pubsub";
-import { GetApiType, contextBridge, createIpcRenderer } from "electron-typescript-ipc";
+import { GetApiType } from "electron-typescript-ipc";
+import { z } from "zod";
 
-export type TopicHierarchy = {
-  name: string,
+export type Topic = {
+  name: string
+}
+export type TopicHierarchy = Topic & {
   subscriptions: {
     id: string,
     name: string,
   }[]
 }
 
-export type receivedMessage = {
-  sub: string,
-  id: string,
-  data: string,
-  attrs: Record<string, string>,
-  published: Date,
-}
+export const ReceivedMessageSchema = z.object({
+  sub: z.string(),
+  id: z.string(),
+  data: z.string(),
+  attrs: z.record(z.string()),
+  published: z.string(),
+})
+
+export type receivedMessage = z.infer<typeof ReceivedMessageSchema>
 
 export type Api = GetApiType<
   {

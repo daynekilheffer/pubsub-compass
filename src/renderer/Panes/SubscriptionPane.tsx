@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react'
-import produce from 'immer'
+import { Settings } from '@mui/icons-material'
 import {
   Autocomplete,
   Box,
@@ -15,12 +14,12 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { Settings } from '@mui/icons-material'
-import { watch } from '../api/subscriptions'
+import { produce } from 'immer'
+import { useEffect, useState } from 'react'
 import { useTabActivityIndicator } from '../TabManager'
+import { TabState } from '../api'
+import { receivedMessage, watch } from '../api/subscriptions'
 import BasePane from './BasePane'
-import { receivedMessage } from 'src/ipc-api'
-import { TabData } from '../api'
 
 const walk = (json: any, path: string): unknown => {
   const parts = path.split('.')
@@ -54,6 +53,7 @@ const extractPaths = (obj: parsedMessage) => [
   ...extractNested(obj.attrs).map((p) => `attr: ${p}`),
 ]
 
+
 type parsedMessage = {
   id: string
   data: object
@@ -66,7 +66,7 @@ type Settings = {
   editFields: string[]
 }
 
-export default function SubscriptionPane({ tab, active = false }: { tab: TabData, active?: boolean }) {
+export default function SubscriptionPane({ tab, active = false }: { tab: TabState, active?: boolean }) {
   const [watching, setWatching] = useState(false)
   const [messages, setMessages] = useState<parsedMessage[]>([])
   const [settings, setSettings] = useState<Settings>({ fields: [], editFields: [] })
@@ -80,7 +80,7 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabData
           {
             id: msg.id,
             data: JSON.parse(msg.data),
-            published: msg.published,
+            published: new Date(msg.published),
             attrs: msg.attrs,
           },
           ...msgs,
@@ -92,7 +92,7 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabData
       }
       return watch(tab.name, listener)
     }
-  }, [active, watching, toggleActivity])
+  }, [tab.name, active, watching, toggleActivity])
 
   useEffect(() => {
     if (active) {

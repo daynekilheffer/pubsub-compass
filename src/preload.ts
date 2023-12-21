@@ -32,14 +32,13 @@ const api: Api = {
       return ipcRenderer.invoke('stopWatch', ...args);
     },
     setActivity: async (...args) => {
-      return ipcRenderer.invoke('stopWatch', ...args);
+      return ipcRenderer.invoke('setActivity', ...args);
     },
   },
   on: {
     subscribedMessage: (listener: (event: IpcRendererEvent, message: receivedMessage) => void) => {
       ipcRenderer.on('subscribedMessage', (evt, msg) => {
-        // @ts-expect-error
-        listener(evt, msg);
+        listener(evt, msg as receivedMessage);
       })
     }
   },

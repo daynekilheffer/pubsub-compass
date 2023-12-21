@@ -1,4 +1,3 @@
-import React, { ComponentProps } from 'react'
 import { Box, IconButton, Tab, Tabs as MuiTabs } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useSelectTab, useTabManager, useTabs } from './TabManager'
@@ -11,7 +10,7 @@ export default function Tabs() {
     return null
   }
 
-  let selectedIdx: number | false = tabs.findIndex((t) => t.selected === true)
+  let selectedIdx: number | false = tabs.findIndex((t) => t.isSelected === true)
   if (selectedIdx === -1) {
     selectedIdx = false
   }
@@ -28,6 +27,7 @@ export default function Tabs() {
       {tabs.map((tab) => (
         <Tab
           key={tab.id}
+          disableRipple
           icon={
             <IconButton
               component="span"
@@ -44,7 +44,7 @@ export default function Tabs() {
           label={
             <Box>
               {tab.name}
-              {tab.activity && (
+              {tab.hasActivity && (
                 <Box
                   display="inline-block"
                   borderRadius="50%"

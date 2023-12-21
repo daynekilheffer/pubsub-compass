@@ -3,14 +3,15 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react'
-import * as storage from './api/storage'
+import { create as storageFactory } from './api/storage'
 import * as app from './api/app'
-import { TabData, TabType } from './api';
+import { TabDataSchema, TabState, TabType } from './api';
 
 type ContextValue = {
-  tabs: TabData[];
+  tabs: TabState[];
   addTab: (name: string, type: TabType) => void;
   deleteTab: (id: string) => void;
   selectTab: (id: string) => void;
@@ -18,28 +19,41 @@ type ContextValue = {
 }
 const ctx = React.createContext<ContextValue>(null!)
 
+
+const createStorage = () => {
+  return storageFactory(TabDataSchema, 'tags.json')
+}
+
+const useHistoryStorage = () => {
+  const historyStorage = useRef<ReturnType<typeof createStorage>>()
+  if (!historyStorage.current) {
+    historyStorage.current = createStorage()
+  }
+  return historyStorage.current
+}
+
 export const TAB_TYPES = {
   subscription: 'sub',
   topic: 'topic',
 } as const
 
 export default function TabManager({ children }: { children: React.ReactNode }) {
-  const [tabs, setTabs] = useState<TabData[]>([])
-
-  const hasAnyActivity = tabs.some((t) => t.activity)
+  const [tabs, setTabs] = useState<TabState[]>([])
+  const historyStorage = useHistoryStorage()
+  const hasAnyActivity = tabs.some((t) => t.hasActivity)
 
   useEffect(() => {
-    storage.get<TabData[]>('tabs.json').then((storageTabs) => {
+    historyStorage.getAll().then((storageTabs) => {
       if (storageTabs.length === undefined) {
         return
       }
       setTabs(storageTabs)
     })
-  }, [])
+  }, [historyStorage])
 
   useEffect(() => {
-    storage.set('tabs.json', tabs)
-  }, [tabs])
+    historyStorage.setAll(tabs)
+  }, [historyStorage, tabs])
 
   useEffect(() => {
     app.setActivity(hasAnyActivity)
@@ -47,9 +61,9 @@ export default function TabManager({ children }: { children: React.ReactNode }) 
 
   const selectTab = useCallback((id: string) => {
     setTabs((state) =>
-      state.map((tb) => ({
+      state.map((tb): TabState => ({
         ...tb,
-        selected: tb.id === id,
+        isSelected: tb.id === id,
       })),
     )
   }, [])
@@ -64,9 +78,9 @@ export default function TabManager({ children }: { children: React.ReactNode }) 
       }
       const id = tab.id
 
-      return newTabs.map((tb) => ({
+      return newTabs.map((tb): TabState => ({
         ...tb,
-        selected: tb.id === id,
+        isSelected: tb.id === id,
       }))
     })
   }, [])
@@ -80,7 +94,7 @@ export default function TabManager({ children }: { children: React.ReactNode }) 
       if (!tab) {
         return state
       }
-      tab.activity = hasActivity
+      tab.hasActivity = hasActivity
       return newTabs
     })
   }, [])

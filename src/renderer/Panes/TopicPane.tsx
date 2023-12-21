@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, FormEventHandler } from 'react'
+import React, { useCallback, useState, useEffect, FormEventHandler, useRef } from 'react'
 import PropTypes from 'prop-types'
 
 import { produce } from 'immer'
@@ -17,41 +17,64 @@ import { send as topicSend } from '../api/topics'
 import BasePane from './BasePane'
 import TopicHistory from './TopicHistoryDrawer'
 
-import * as storage from '../api/storage'
-import { HistoryItem, TabData } from '../api'
+import { create as storageFactory } from '../api/storage'
+import { HistoryItem, TabState } from '../api'
+import { z } from 'zod'
+
+const history = z.object({
+  id: z.string(),
+  payload: z.string(),
+  attrs: z.array(
+    z.object(
+      { key: z.string(), value: z.string() }
+    )
+  ),
+})
+
+const createStorage = (tabName: string) => {
+  return storageFactory(history, tabName)
+}
+
+const useHistoryStorage = (tabName: string) => {
+  const historyStorage = useRef<ReturnType<typeof createStorage>>()
+  if (!historyStorage.current) {
+    historyStorage.current = createStorage(tabName)
+  }
+  return historyStorage.current
+}
 
 const useTabHistory = (tabName: string) => {
-  const fileName = `${tabName}-history.json`
+  const historyStorage = useHistoryStorage(`${tabName}-history.json`)
   const [state, setState] = useState<HistoryItem[]>([])
   useEffect(() => {
-    storage.get<HistoryItem[]>(fileName).then((hist) => {
+    historyStorage.getAll().then((hist) => {
       if (hist.length > 0) {
         setState(hist)
       }
     })
-  }, [fileName])
+  }, [historyStorage])
 
   const addItem = (payload: HistoryItem["payload"], attrs: HistoryItem["attrs"]) => {
     const id = `history-${Math.floor(Math.random() * 1000000)}`
     const newItem = { id, payload, attrs }
     const newState = [...state, newItem]
     setState(newState)
-    storage.set(fileName, newState)
+    historyStorage.setAll(newState)
   }
   const deleteItem = (idx: number) => {
     const newState = state.slice(idx, idx + 1)
     setState(newState)
-    storage.set(fileName, newState)
+    historyStorage.setAll(newState)
   }
   const clearHistory = () => {
     setState([])
-    storage.set(fileName, [])
+    historyStorage.setAll([])
   }
 
   return [state, addItem, deleteItem, clearHistory] as const
 }
 
-export default function TopicPane({ tab, active }: { tab: TabData; active: boolean }) {
+export default function TopicPane({ tab, active }: { tab: TabState; active: boolean }) {
   const [history, addToHistory, , clearHistory] = useTabHistory(tab.name)
   const [text, setText] = useState('{}')
   const [attrs, setAttributes] = useState<{ key: string, value: string }[]>([])

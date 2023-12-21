@@ -1,10 +1,11 @@
-import path from 'node:path';
-import { app, BrowserWindow } from 'electron';
+import { Message, PubSub, Subscription } from '@google-cloud/pubsub';
+import { BrowserWindow, Menu, app } from 'electron';
 import { createIpcMain } from 'electron-typescript-ipc';
-import { Message, PubSub, Subscription } from '@google-cloud/pubsub'
+import path from 'node:path';
 import { Api, TopicHierarchy } from './ipc-api';
 
-import storage from 'electron-json-storage'
+import storage from 'electron-json-storage';
+import { applicationMenu } from './app-menu';
 
 const ipcMain = createIpcMain<Api>();
 
@@ -25,6 +26,7 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
     },
   })
+  Menu.setApplicationMenu(applicationMenu())
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {

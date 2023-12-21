@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { CssBaseline } from '@mui/material'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 
-import { list } from './api/topics'
+import { list, TopicHierarchy } from './api/topics'
 import { reset } from './api/subscriptions'
 
 import TopicList from './TopicList'
@@ -10,7 +10,6 @@ import Frame, { Rail, Main } from './Structure'
 import TabManager from './TabManager'
 import Tabs from './Tabs'
 import Panes from './Panes'
-import { TopicHierarchy } from 'src/ipc-api'
 
 const theme = createTheme({
   palette: {
