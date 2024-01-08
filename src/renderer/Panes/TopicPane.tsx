@@ -95,7 +95,7 @@ export default function TopicPane({ tab, active }: { tab: TabState; active: bool
       )
       addToHistory(payload, attrs)
     },
-    [tab.name, addToHistory],
+    [tab.name, addToHistory, attrs],
   )
 
   const submit: FormEventHandler<HTMLFormElement> = (e) => {
