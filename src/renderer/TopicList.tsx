@@ -1,56 +1,64 @@
-import { Fragment } from 'react'
-import PropTypes from 'prop-types'
+import { PushPin } from '@mui/icons-material'
 import {
-  Box,
+  IconButton,
   List,
+  ListItem,
   ListItemButton,
   ListItemText,
-  Typography,
+  ListSubheader
 } from '@mui/material'
-import { useTabManager, TAB_TYPES } from './TabManager'
-import { TopicHierarchy } from './api/topics'
+import { useTopics } from './PubSubDataAccess'
+import { useTabManager } from './TabManager'
+import { createPinManager } from './TopicListManager'
+import { Topic } from './api/topics'
 
-function TopicList({ topics }: { topics: TopicHierarchy[] }) {
-  const [add] = useTabManager()
+const useTopicPins = createPinManager('topics')
+function TopicList() {
+  const topics = useTopics()
+  const [setTab] = useTabManager()
+
+  const [pinnedTopics, togglePinned] = useTopicPins()
+
+  const renderTopic = (topic: Topic) => {
+    return (
+      <ListItem key={topic.name} disablePadding secondaryAction={<IconButton onClick={() => togglePinned(topic.name)}><PushPin /></IconButton>}>
+        <ListItemButton
+          onClick={() => {
+            setTab(topic.name, 'topic')
+          }}>
+          <ListItemText primary={topic.name} />
+        </ListItemButton>
+      </ListItem>
+    )
+  }
+
+  const { pinned, unpinned } = topics.reduce<{ pinned?: Topic[], unpinned?: Topic[] }>((acc, topic) => {
+    if (pinnedTopics.includes(topic.name)) {
+      acc.pinned ??= []
+      acc.pinned.push(topic)
+    } else {
+      acc.unpinned ??= []
+      acc.unpinned.push(topic)
+    }
+    return acc
+  }, {})
 
   return (
     <>
-      <Box p={2} pb={0}>
-        <Typography component="h2" variant="h5">
-          Topics
-        </Typography>
-      </Box>
-      <List component="nav">
-        {topics.map((t) => (
-          <Fragment key={t.name}>
-            <ListItemButton onClick={() => add(t.name, TAB_TYPES.topic)}>
-              <ListItemText primary={t.name} />
-            </ListItemButton>
-            {t.subscriptions.length > 0 && (
-              <List>
-                {t.subscriptions.map((s) => (
-                  <ListItemButton
-                    key={s.name}
-                    sx={{ pl: 5 }}
-                    onClick={() => add(s.name, TAB_TYPES.subscription)}
-                  >
-                    <ListItemText primary={s.name} />
-                  </ListItemButton>
-                ))}
-              </List>
-            )}
-          </Fragment>
-        ))}
-      </List>
+      {pinned?.length ?
+        <List component="nav" disablePadding>
+          <ListSubheader>Pinned</ListSubheader>
+          {pinned.map(t => renderTopic(t))}
+        </List> : null
+      }
+      {unpinned?.length ?
+        <List component="nav" disablePadding>
+          {(pinned?.length ?? 0) > 0 && <ListSubheader>Unpinned</ListSubheader>}
+          {unpinned.map(t => renderTopic(t))}
+        </List> : null
+      }
     </>
   )
-}
-TopicList.propTypes = {
-  topics: PropTypes.arrayOf(
-    PropTypes.shape({
-      name: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
 }
 
 export default TopicList

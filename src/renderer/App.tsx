@@ -1,15 +1,12 @@
-import { useEffect, useState } from 'react'
 import { CssBaseline } from '@mui/material'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { createTheme, darken, ThemeProvider } from '@mui/material/styles'
 
-import { list, TopicHierarchy } from './api/topics'
-import { reset } from './api/subscriptions'
 
-import TopicList from './TopicList'
-import Frame, { Rail, Main } from './Structure'
-import TabManager from './TabManager'
-import Tabs from './Tabs'
 import Panes from './Panes'
+import Manager from './PubSubDataAccess'
+import TopicSubTabs from './RailTabs'
+import Frame, { Main, Rail } from './Structure'
+import TabManager from './TabManager'
 
 const theme = createTheme({
   palette: {
@@ -24,42 +21,38 @@ const theme = createTheme({
       default: '#fbf3e2',
       paper: '#fff',
     },
+    divider: darken('#fbf3e2', 0.1),
+    text: {
+      primary: darken('#fbf3e2', 0.55)
+    }
   },
   shape: {
     borderRadius: 8,
   },
+  spacing: 6,
   typography: {
     fontSize: 12,
   },
 })
 
 function App() {
-  const [topics, setTopics] = useState<TopicHierarchy[]>([])
-  useEffect(() => {
-    list().then((t) => setTopics(t))
-  }, [])
-
-  useEffect(() => {
-    reset()
-  }, [])
 
   return (
-    <>
+    <Manager>
       <CssBaseline />
       <ThemeProvider theme={theme}>
         <TabManager>
           <Frame>
             <Rail>
-              <TopicList topics={topics} />
+              <TopicSubTabs />
             </Rail>
             <Main>
-              <Tabs />
               <Panes />
             </Main>
           </Frame>
         </TabManager>
       </ThemeProvider>
-    </>
+    </Manager>
   )
 }
 

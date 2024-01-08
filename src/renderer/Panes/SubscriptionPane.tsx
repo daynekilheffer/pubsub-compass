@@ -15,8 +15,7 @@ import {
   Typography,
 } from '@mui/material'
 import { produce } from 'immer'
-import { useEffect, useState } from 'react'
-import { useTabActivityIndicator } from '../TabManager'
+import { useCallback, useEffect, useState } from 'react'
 import { TabState } from '../api'
 import { receivedMessage, watch } from '../api/subscriptions'
 import BasePane from './BasePane'
@@ -71,7 +70,7 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabStat
   const [messages, setMessages] = useState<parsedMessage[]>([])
   const [settings, setSettings] = useState<Settings>({ fields: [], editFields: [] })
   const [editingSettings, setEditingSettings] = useState(false)
-  const toggleActivity = useTabActivityIndicator(tab.id)
+  const toggleActivity = useCallback((_: boolean) => undefined, [])
 
   useEffect(() => {
     if (watching) {
@@ -98,7 +97,7 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabStat
     if (active) {
       toggleActivity(false)
     }
-  }, [active])
+  }, [active, toggleActivity])
 
   useEffect(() => {
     const to = setTimeout(() => {
@@ -165,6 +164,9 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabStat
 
   return (
     <BasePane>
+      <Typography variant="h6" paragraph>
+        {tab.name}
+      </Typography>
       <Box mb={2}>
         <Box display="flex" justifyContent="space-between">
           <Button onClick={() => setWatching((val) => !val)}>

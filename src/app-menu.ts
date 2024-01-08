@@ -4,7 +4,6 @@ import storage from 'electron-json-storage';
 
 export const applicationMenu = () => {
   const menu = Menu.getApplicationMenu()
-  console.log(menu)
   if (!menu) {
     return menu
   }

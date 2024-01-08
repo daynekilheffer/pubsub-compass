@@ -1,4 +1,4 @@
-import { Box, Drawer, useTheme } from '@mui/material'
+import { Box, Drawer, alpha, useTheme } from '@mui/material'
 
 export default function Frame({ children }: { children: React.ReactNode }) {
   return (
@@ -19,7 +19,7 @@ export function Rail({ children }: { children: React.ReactNode }) {
       }}
       PaperProps={{
         sx: {
-          backgroundColor: palette.background.default,
+          backgroundColor: alpha(palette.background.default, 0.5),
           maxWidth: 320,
         },
       }}

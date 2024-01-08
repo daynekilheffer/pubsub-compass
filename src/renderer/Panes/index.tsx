@@ -1,15 +1,11 @@
-import Pane from './Pane'
-import { useTabs } from '../TabManager'
+import { useActiveTab } from '../TabManager'
 import EmptyPane from './EmptyPane'
+import Pane from './Pane'
 
 export default function Panes() {
-  const tabs = useTabs()
-  if (tabs.length === 0) {
+  const activeTab = useActiveTab()
+  if (activeTab === null) {
     return <EmptyPane />
   }
-  return <>
-    {tabs.map((tab) => (
-      <Pane key={tab.id} tab={tab} active={tab.isSelected} />
-    ))}
-  </>
+  return <Pane key={activeTab.id} tab={activeTab} active={activeTab.isSelected} />
 }
