@@ -14,7 +14,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { produce } from 'immer'
 import { useCallback, useEffect, useState } from 'react'
 import { TabState } from '../api'
 import { receivedMessage, watch } from '../api/subscriptions'
@@ -189,11 +188,14 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabStat
               value={field}
               allowedValues={suggestedValues}
               onChange={(value) => {
-                setSettings(
-                  produce((draft) => {
-                    draft.editFields[idx] = value
-                  }),
-                )
+                setSettings(existingSettings => {
+                  const settings = {
+                    ...existingSettings,
+                    editFields: [...existingSettings.editFields]
+                  }
+                  settings.editFields[idx] = value
+                  return settings
+                })
               }}
             />
           ))}

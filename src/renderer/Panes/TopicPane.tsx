@@ -1,8 +1,9 @@
-import React, { useCallback, useState, useEffect, FormEventHandler, useRef } from 'react'
 import PropTypes from 'prop-types'
+import { FormEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 
-import { produce } from 'immer'
 
+import DeleteIcon from '@mui/icons-material/Delete'
+import HistoryIcon from '@mui/icons-material/History'
 import {
   Box,
   Button,
@@ -11,15 +12,13 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import DeleteIcon from '@mui/icons-material/Delete'
-import HistoryIcon from '@mui/icons-material/History'
 import { send as topicSend } from '../api/topics'
 import BasePane from './BasePane'
 import TopicHistory from './TopicHistoryDrawer'
 
-import { create as storageFactory } from '../api/storage'
-import { HistoryItem, TabState } from '../api'
 import { z } from 'zod'
+import { HistoryItem, TabState } from '../api'
+import { create as storageFactory } from '../api/storage'
 
 const history = z.object({
   id: z.string(),
@@ -126,19 +125,17 @@ export default function TopicPane({ tab, active }: { tab: TabState; active: bool
   const onAddAttribute = () => setAttributes([...attrs, { key: '', value: '' }])
 
   const onAttributeChange = (idx: number) => (key: string, value: string) =>
-    setAttributes(
-      produce((draft) => {
-        // eslint-disable-next-line no-param-reassign
-        draft[idx] = { key, value }
-      }),
-    )
+    setAttributes(attrs => {
+      const newAttrs = [...attrs]
+      newAttrs[idx] = { key, value }
+      return newAttrs
+    })
   const onDeleteAttribute = (idx: number) => () =>
-    setAttributes(
-      produce((draft) => {
-        // eslint-disable-next-line no-param-reassign
-        draft.splice(idx, 1)
-      }),
-    )
+    setAttributes(attrs => {
+      const newAttrs = [...attrs]
+      newAttrs.splice(idx, 1)
+      return newAttrs
+    })
 
   if (!active) {
     return null
