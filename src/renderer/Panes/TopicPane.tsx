@@ -1,17 +1,10 @@
+/* eslint import/no-unresolved: off */
 import PropTypes from 'prop-types'
 import { FormEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 
-
 import DeleteIcon from '@mui/icons-material/Delete'
 import HistoryIcon from '@mui/icons-material/History'
-import {
-  Box,
-  Button,
-  FormHelperText,
-  IconButton,
-  TextField,
-  Typography,
-} from '@mui/material'
+import { Box, Button, FormHelperText, IconButton, TextField, Typography } from '@mui/material'
 import { send as topicSend } from '../api/topics'
 import BasePane from './BasePane'
 import TopicHistory from './TopicHistoryDrawer'
@@ -19,15 +12,12 @@ import TopicHistory from './TopicHistoryDrawer'
 import { z } from 'zod'
 import { HistoryItem, TabState } from '../api'
 import { create as storageFactory } from '../api/storage'
+import Editor from './Editor'
 
 const history = z.object({
   id: z.string(),
   payload: z.string(),
-  attrs: z.array(
-    z.object(
-      { key: z.string(), value: z.string() }
-    )
-  ),
+  attrs: z.array(z.object({ key: z.string(), value: z.string() })),
 })
 
 const createStorage = (tabName: string) => {
@@ -53,7 +43,7 @@ const useTabHistory = (tabName: string) => {
     })
   }, [historyStorage])
 
-  const addItem = (payload: HistoryItem["payload"], attrs: HistoryItem["attrs"]) => {
+  const addItem = (payload: HistoryItem['payload'], attrs: HistoryItem['attrs']) => {
     const id = `history-${Math.floor(Math.random() * 1000000)}`
     const newItem = { id, payload, attrs }
     const newState = [...state, newItem]
@@ -76,7 +66,7 @@ const useTabHistory = (tabName: string) => {
 export default function TopicPane({ tab, active }: { tab: TabState; active: boolean }) {
   const [history, addToHistory, , clearHistory] = useTabHistory(tab.name)
   const [text, setText] = useState('{}')
-  const [attrs, setAttributes] = useState<{ key: string, value: string }[]>([])
+  const [attrs, setAttributes] = useState<{ key: string; value: string }[]>([])
   const [error, setError] = useState<Error | null>(null)
   const [historyOpen, setHistoryOpen] = useState(false)
 
@@ -125,13 +115,13 @@ export default function TopicPane({ tab, active }: { tab: TabState; active: bool
   const onAddAttribute = () => setAttributes([...attrs, { key: '', value: '' }])
 
   const onAttributeChange = (idx: number) => (key: string, value: string) =>
-    setAttributes(attrs => {
+    setAttributes((attrs) => {
       const newAttrs = [...attrs]
       newAttrs[idx] = { key, value }
       return newAttrs
     })
   const onDeleteAttribute = (idx: number) => () =>
-    setAttributes(attrs => {
+    setAttributes((attrs) => {
       const newAttrs = [...attrs]
       newAttrs.splice(idx, 1)
       return newAttrs
@@ -146,28 +136,10 @@ export default function TopicPane({ tab, active }: { tab: TabState; active: bool
         <Box display="flex">
           <Box flexGrow={1} pr={2}>
             <Typography paragraph>Message</Typography>
-            <TextField
-              sx={{
-                '& textarea': {
-                  fontFamily: 'monospace',
-                },
-              }}
-              name="payload"
-              inputProps={{ fontFamily: 'monospace' }}
-              label="json payload"
-              minRows={8}
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              multiline
-              fullWidth
-            />
+            <Editor value={text} onChange={(v) => setText(v)} />
             <Box display="flex" justifyContent="space-between" mt={2}>
               <Box>
-                <IconButton
-                  size="small"
-                  onClick={() => setHistoryOpen(true)}
-                  disabled={history.length === 0}
-                >
+                <IconButton size="small" onClick={() => setHistoryOpen(true)} disabled={history.length === 0}>
                   <HistoryIcon />
                 </IconButton>
               </Box>
@@ -211,7 +183,12 @@ export default function TopicPane({ tab, active }: { tab: TabState; active: bool
   )
 }
 
-function Attribute({ attrKey = '', value = '', onChange, onDelete }: {
+function Attribute({
+  attrKey = '',
+  value = '',
+  onChange,
+  onDelete,
+}: {
   attrKey?: string
   value?: string
   onChange: (key: string, value: string) => void
@@ -226,18 +203,8 @@ function Attribute({ attrKey = '', value = '', onChange, onDelete }: {
         sx={{ mr: 0.5 }}
         onChange={(e) => onChange(e.target.value, value)}
       />
-      <TextField
-        label="value"
-        value={value}
-        size="small"
-        onChange={(e) => onChange(attrKey, e.target.value)}
-      />
-      <IconButton
-        aria-label="delete"
-        size="small"
-        sx={{ marginLeft: 1 }}
-        onClick={onDelete}
-      >
+      <TextField label="value" value={value} size="small" onChange={(e) => onChange(attrKey, e.target.value)} />
+      <IconButton aria-label="delete" size="small" sx={{ marginLeft: 1 }} onClick={onDelete}>
         <DeleteIcon />
       </IconButton>
     </Box>

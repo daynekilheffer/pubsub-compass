@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Security-Policy" content="
-    default-src 'self' 'unsafe-eval';
-    style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    font-src https://fonts.gstatic.com;
+    default-src 'self' 'unsafe-eval' 'unsafe-inline';
+    img-src 'self' data:;
+    style-src-elem 'self' 'unsafe-inline' 'unsafe-hashes' https://fonts.googleapis.com;
+    font-src https://fonts.gstatic.com 'self';
     ">
     <title>Pub/Sub Compass</title>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
