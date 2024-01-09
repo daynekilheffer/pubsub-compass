@@ -9,19 +9,12 @@ import { send as topicSend } from '../api/topics'
 import BasePane from './BasePane'
 import TopicHistory from './TopicHistoryDrawer'
 
-import { z } from 'zod'
-import { HistoryItem, TabState } from '../api'
+import { HistoryItem, HistoryItemSchema, TabState } from '../api'
 import { create as storageFactory } from '../api/storage'
 import Editor from './Editor'
 
-const history = z.object({
-  id: z.string(),
-  payload: z.string(),
-  attrs: z.array(z.object({ key: z.string(), value: z.string() })),
-})
-
 const createStorage = (tabName: string) => {
-  return storageFactory(history, tabName)
+  return storageFactory(HistoryItemSchema, tabName)
 }
 
 const useHistoryStorage = (tabName: string) => {
@@ -173,7 +166,7 @@ export default function TopicPane({ tab, active }: { tab: TabState; active: bool
         onClearHistory={() => clearHistory()}
         onLoadHistoryItem={(item) => {
           if (!formatAndSave(JSON.stringify(item.payload))) {
-            setText(item.payload)
+            setText(JSON.stringify(item.payload))
           }
           setAttributes(item.attrs)
           setHistoryOpen(false)

@@ -1,17 +1,17 @@
-import { z } from "zod"
-
+import { z } from 'zod'
 
 export const HistoryItemSchema = z.object({
   id: z.string(),
-  payload: z.string(),
-  attrs: z.array(z.object({
-    key: z.string(),
-    value: z.string(),
-  })),
+  payload: z.object({}).passthrough(),
+  attrs: z.array(
+    z.object({
+      key: z.string(),
+      value: z.string(),
+    }),
+  ),
 })
 
 export type HistoryItem = z.infer<typeof HistoryItemSchema>
-
 
 export type TabType = 'sub' | 'topic'
 
@@ -23,10 +23,11 @@ export const TabDataSchema = z.object({
 })
 
 type Prettify<T> = {
-  [K in keyof T]: T[K];
-} & {};
+  [K in keyof T]: T[K]
+} & {}
 
-
-export type TabState = Prettify<z.infer<typeof TabDataSchema> & {
-  hasActivity?: boolean
-}>
+export type TabState = Prettify<
+  z.infer<typeof TabDataSchema> & {
+    hasActivity?: boolean
+  }
+>

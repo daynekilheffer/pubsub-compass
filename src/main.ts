@@ -142,11 +142,20 @@ app.whenReady().then(() => {
     'storageGet',
     (evt, key) =>
       new Promise((resolve, reject) => {
-        storage.get(key, (error, data) => {
+        storage.has(key, (error, hasKey) => {
           if (error) {
             return reject(error)
           }
-          resolve(data)
+          if (!hasKey) {
+            return resolve([])
+          }
+
+          storage.get(key, (error, data) => {
+            if (error) {
+              return reject(error)
+            }
+            resolve(data)
+          })
         })
       }),
   )
