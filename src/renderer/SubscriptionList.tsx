@@ -1,12 +1,6 @@
-import { PushPin } from '@mui/icons-material'
-import {
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText
-} from '@mui/material'
+import { Divider } from '@mui/material'
 import { Subscription, useSubscriptions } from './PubSubDataAccess'
+import RailList, { RailListItem } from './RailList'
 import { useTabManager } from './TabManager'
 import { createPinManager } from './TopicListManager'
 
@@ -15,23 +9,9 @@ function SubscriptionList() {
   const subs = useSubscriptions()
   const [setTab] = useTabManager()
 
-
   const [pinnedSubs, togglePinned] = useSubscriptionPins()
 
-  const renderSub = (sub: Subscription) => {
-    return (
-      <ListItem key={sub.name} disablePadding secondaryAction={<IconButton onClick={() => togglePinned(sub.name)}><PushPin /></IconButton>}>
-        <ListItemButton
-          onClick={() => {
-            setTab(sub.name, 'sub')
-          }}>
-          <ListItemText primary={sub.name} />
-        </ListItemButton>
-      </ListItem>
-    )
-  }
-
-  const { pinned, unpinned } = subs.reduce<{ pinned?: Subscription[], unpinned?: Subscription[] }>((acc, sub) => {
+  const { pinned, unpinned } = subs.reduce<{ pinned?: Subscription[]; unpinned?: Subscription[] }>((acc, sub) => {
     if (pinnedSubs.includes(sub.name)) {
       acc.pinned ??= []
       acc.pinned.push(sub)
@@ -43,18 +23,26 @@ function SubscriptionList() {
   }, {})
 
   return (
-    <>
-      {pinned?.length ?
-        <List component="nav">
-          {pinned.map(s => renderSub(s))}
-        </List> : null
-      }
-      {unpinned?.length ?
-        <List component="nav">
-          {unpinned.map(s => renderSub(s))}
-        </List> : null
-      }
-    </>
+    <RailList>
+      {pinned?.map((sub) => (
+        <RailListItem
+          key={sub.name}
+          name={sub.name}
+          pinned
+          onSelect={() => setTab(sub.name, 'sub')}
+          onPinToggle={() => togglePinned(sub.name)}
+        />
+      ))}
+      {(pinned?.length ?? 0) > 0 && <Divider variant="middle" />}
+      {unpinned?.map((sub) => (
+        <RailListItem
+          key={sub.name}
+          name={sub.name}
+          onSelect={() => setTab(sub.name, 'sub')}
+          onPinToggle={() => togglePinned(sub.name)}
+        />
+      ))}
+    </RailList>
   )
 }
 

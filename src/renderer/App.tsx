@@ -1,6 +1,5 @@
 import { CssBaseline } from '@mui/material'
-import { createTheme, darken, ThemeProvider } from '@mui/material/styles'
-
+import { alpha, createTheme, darken, lighten, ThemeProvider } from '@mui/material/styles'
 
 import Panes from './Panes'
 import Manager from './PubSubDataAccess'
@@ -11,7 +10,9 @@ import TabManager from './TabManager'
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1987cb',
+      main: '#EBA550',
+      light: lighten('#EBA550', 0.1),
+      dark: darken('#EBA550', 0.1),
     },
     secondary: {
       main: '#cb5d19',
@@ -21,10 +22,10 @@ const theme = createTheme({
       default: '#fbf3e2',
       paper: '#fff',
     },
-    divider: darken('#fbf3e2', 0.1),
+    divider: alpha('#EBA550', 0.4),
     text: {
-      primary: darken('#fbf3e2', 0.55)
-    }
+      primary: darken('#EBA550', 0.55),
+    },
   },
   shape: {
     borderRadius: 8,
@@ -32,11 +33,11 @@ const theme = createTheme({
   spacing: 6,
   typography: {
     fontSize: 12,
+    fontFamily: '"Noto Sans Indic Siyaq Numbers", sans-serif',
   },
 })
 
 function App() {
-
   return (
     <Manager>
       <CssBaseline />
