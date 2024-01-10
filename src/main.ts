@@ -4,8 +4,8 @@ import { createIpcMain } from 'electron-typescript-ipc'
 import path from 'node:path'
 import { Api, TopicHierarchy } from './ipc-api'
 
-import storage from 'electron-json-storage'
 import { applicationMenu } from './app-menu'
+import storage from './promising-storage'
 
 const ipcMain = createIpcMain<Api>()
 
@@ -138,35 +138,16 @@ app.whenReady().then(() => {
     app.setBadgeCount(activity ? undefined : 0)
   })
 
-  ipcMain.handle(
-    'storageGet',
-    (evt, key) =>
-      new Promise((resolve, reject) => {
-        storage.has(key, (error, hasKey) => {
-          if (error) {
-            return reject(error)
-          }
-          if (!hasKey) {
-            return resolve([])
-          }
-
-          storage.get(key, (error, data) => {
-            if (error) {
-              return reject(error)
-            }
-            resolve(data)
-          })
-        })
-      }),
-  )
+  ipcMain.handle('storageGet', async (evt, key) => {
+    const isInStorage = await storage.has(key)
+    if (!isInStorage) {
+      return []
+    }
+    return storage.get(key)
+  })
   ipcMain.handle('storageSet', (evt, key, data) => {
-    return new Promise((resolve, reject) => {
-      storage.set(key, data, (error) => {
-        if (error) {
-          return reject(error)
-        }
-        resolve()
-      })
-    })
+    return async () => {
+      await storage.set(key, data)
+    }
   })
 })

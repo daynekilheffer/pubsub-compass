@@ -1,13 +1,13 @@
-import { GetApiType } from "electron-typescript-ipc";
-import { z } from "zod";
+import { GetApiType } from 'electron-typescript-ipc'
+import { z } from 'zod'
 
 export type Topic = {
   name: string
 }
 export type TopicHierarchy = Topic & {
   subscriptions: {
-    id: string,
-    name: string,
+    id: string
+    name: string
   }[]
 }
 
@@ -35,4 +35,4 @@ export type Api = GetApiType<
   {
     subscribedMessage: (message: receivedMessage) => void
   }
->;
+>
