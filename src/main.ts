@@ -146,8 +146,6 @@ app.whenReady().then(() => {
     return storage.get(key)
   })
   ipcMain.handle('storageSet', (evt, key, data) => {
-    return async () => {
-      await storage.set(key, data)
-    }
+    return storage.set(key, data)
   })
 })
