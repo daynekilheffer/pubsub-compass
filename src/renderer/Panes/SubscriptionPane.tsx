@@ -1,4 +1,4 @@
-import { Settings } from '@mui/icons-material'
+import Settings from '@mui/icons-material/Settings'
 import {
   Autocomplete,
   Box,
@@ -51,7 +51,6 @@ const extractPaths = (obj: parsedMessage) => [
   ...extractNested(obj.attrs).map((p) => `attr: ${p}`),
 ]
 
-
 type parsedMessage = {
   id: string
   data: object
@@ -64,7 +63,7 @@ type Settings = {
   editFields: string[]
 }
 
-export default function SubscriptionPane({ tab, active = false }: { tab: TabState, active?: boolean }) {
+export default function SubscriptionPane({ tab, active = false }: { tab: TabState; active?: boolean }) {
   const [watching, setWatching] = useState(false)
   const [messages, setMessages] = useState<parsedMessage[]>([])
   const [settings, setSettings] = useState<Settings>({ fields: [], editFields: [] })
@@ -143,9 +142,7 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabStat
           {messages.map((msg) => (
             <TableRow key={msg.id}>
               {cols.map((col) => (
-                <TableCell key={col}>
-                  {JSON.stringify(extractData(msg, col))}
-                </TableCell>
+                <TableCell key={col}>{JSON.stringify(extractData(msg, col))}</TableCell>
               ))}
             </TableRow>
           ))}
@@ -188,10 +185,10 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabStat
               value={field}
               allowedValues={suggestedValues}
               onChange={(value) => {
-                setSettings(existingSettings => {
+                setSettings((existingSettings) => {
                   const settings = {
                     ...existingSettings,
-                    editFields: [...existingSettings.editFields]
+                    editFields: [...existingSettings.editFields],
                   }
                   settings.editFields[idx] = value
                   return settings
@@ -218,7 +215,15 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabStat
   )
 }
 
-const SettingsField = ({ value, allowedValues, onChange }: { value: string, allowedValues: string[], onChange: (msg: string) => void }) => {
+const SettingsField = ({
+  value,
+  allowedValues,
+  onChange,
+}: {
+  value: string
+  allowedValues: string[]
+  onChange: (msg: string) => void
+}) => {
   return (
     <Box mb={1}>
       <Autocomplete

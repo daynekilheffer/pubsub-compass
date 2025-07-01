@@ -1,4 +1,4 @@
-import { PushPin } from '@mui/icons-material'
+import PushPin from '@mui/icons-material/PushPin'
 import { IconButton, List, ListItem, ListItemButton, ListItemText } from '@mui/material'
 import { ReactNode } from 'react'
 

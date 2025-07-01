@@ -1,4 +1,4 @@
-import { Search } from '@mui/icons-material'
+import Search from '@mui/icons-material/Search'
 import { Box, Divider, TextField } from '@mui/material'
 import { useState } from 'react'
 import { useTopics } from './PubSubDataAccess'
