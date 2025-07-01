@@ -1,6 +1,6 @@
-import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react"
-import { z } from "zod"
-import { create } from "./api/storage"
+import { ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { z } from 'zod'
+import { create } from './api/storage'
 
 type PinManagerContext = {
   isPinned: (id: string) => boolean
@@ -11,22 +11,28 @@ const ctx = createContext<PinManagerContext | null>(null)
 
 export const useIsPinned = () => {
   const context = useContext(ctx)
-  const fn = useCallback((id: string) => {
-    if (context === null) {
-      throw new Error('useIsPinned called outside of PinManager')
-    }
-    context.isPinned(id)
-  }, [context])
+  const fn = useCallback(
+    (id: string) => {
+      if (context === null) {
+        throw new Error('useIsPinned called outside of PinManager')
+      }
+      context.isPinned(id)
+    },
+    [context],
+  )
   return fn
 }
 export const usePin = () => {
   const context = useContext(ctx)
-  const fn = useCallback((id: string) => {
-    if (context === null) {
-      throw new Error('useIsPinned called outside of PinManager')
-    }
-    context.pin(id)
-  }, [context])
+  const fn = useCallback(
+    (id: string) => {
+      if (context === null) {
+        throw new Error('useIsPinned called outside of PinManager')
+      }
+      context.pin(id)
+    },
+    [context],
+  )
   return fn
 }
 
@@ -43,7 +49,6 @@ const PinManager = ({ children }: { children: ReactNode }) => {
 
 export default PinManager
 
-
 export const createPinManager = (type: string) => {
   const schema = z.object({
     id: z.string(),
@@ -53,10 +58,12 @@ export const createPinManager = (type: string) => {
   const useHook = () => {
     const [pinned, setPinned] = useState<string[]>()
     useEffect(() => {
-      storage.getAll()
+      storage
+        .getAll()
         .catch(() => {
           return []
-        }).then((pinned) => {
+        })
+        .then((pinned) => {
           setPinned(pinned.map((p) => p.id))
         })
     }, [])
@@ -65,7 +72,7 @@ export const createPinManager = (type: string) => {
         if (pinned !== undefined) {
           storage.setAll(pinned.map((id) => ({ id })))
         }
-      }, 5000)
+      }, 2000)
       return () => clearTimeout(timer)
     }, [pinned])
     const togglePinned = useCallback((id: string) => {
