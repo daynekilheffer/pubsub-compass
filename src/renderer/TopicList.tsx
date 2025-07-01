@@ -1,4 +1,6 @@
-import { Divider } from '@mui/material'
+import { Search } from '@mui/icons-material'
+import { Box, Divider, TextField } from '@mui/material'
+import { useState } from 'react'
 import { useTopics } from './PubSubDataAccess'
 import RailList, { RailListItem } from './RailList'
 import { useTabManager } from './TabManager'
@@ -9,6 +11,7 @@ const useTopicPins = createPinManager('topics')
 function TopicList() {
   const topics = useTopics()
   const [setTab] = useTabManager()
+  const [searchTerm, setSearchTerm] = useState('')
 
   const [pinnedTopics, togglePinned] = useTopicPins()
 
@@ -16,7 +19,7 @@ function TopicList() {
     if (pinnedTopics.includes(topic.name)) {
       acc.pinned ??= []
       acc.pinned.push(topic)
-    } else {
+    } else if (topic.name.toLowerCase().includes(searchTerm.toLowerCase())) {
       acc.unpinned ??= []
       acc.unpinned.push(topic)
     }
@@ -25,6 +28,22 @@ function TopicList() {
 
   return (
     <RailList>
+      {topics.length > 0 && (
+        <Box p={2}>
+          <TextField
+            id="search-topics"
+            label="Search"
+            variant="outlined"
+            type="search"
+            size="small"
+            fullWidth
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: <Search />,
+            }}
+          />
+        </Box>
+      )}
       {pinned?.map((t) => (
         <RailListItem
           key={t.name}
