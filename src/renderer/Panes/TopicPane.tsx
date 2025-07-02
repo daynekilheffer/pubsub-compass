@@ -9,7 +9,7 @@ import { send as topicSend } from '../api/topics'
 import BasePane from './BasePane'
 import TopicHistory from './TopicHistoryDrawer'
 
-import { HistoryItem, HistoryItemSchema, TabState } from '../api'
+import { HistoryItem, HistoryItemSchema, Message, TabState } from '../api'
 import { create as storageFactory } from '../api/storage'
 import Editor from './Editor'
 
@@ -53,18 +53,18 @@ const useTabHistory = (tabName: string) => {
     historyStorage.setAll([])
   }
 
-  return [state, addItem, deleteItem, clearHistory] as const
+  return { history: state, add: addItem, delete: deleteItem, clear: clearHistory }
 }
 
 export default function TopicPane({ tab, active }: { tab: TabState; active: boolean }) {
-  const [history, addToHistory, , clearHistory] = useTabHistory(tab.name)
+  const { history, add: addToHistory, clear: clearHistory } = useTabHistory(tab.name)
   const [text, setText] = useState('{}')
   const [attrs, setAttributes] = useState<{ key: string; value: string }[]>([])
   const [error, setError] = useState<Error | null>(null)
   const [historyOpen, setHistoryOpen] = useState(false)
 
   const send = useCallback(
-    (payload: any) => {
+    (payload: Message) => {
       topicSend(
         tab.name,
         payload,
@@ -84,7 +84,7 @@ export default function TopicPane({ tab, active }: { tab: TabState; active: bool
   const submit: FormEventHandler<HTMLFormElement> = (e) => {
     setError(null)
     e.preventDefault()
-    let json
+    let json: object
     try {
       json = JSON.parse(text)
       send(json)

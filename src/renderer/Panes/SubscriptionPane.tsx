@@ -19,11 +19,14 @@ import { TabState } from '../api'
 import { receivedMessage, watch } from '../api/subscriptions'
 import BasePane from './BasePane'
 
-const walk = (json: any, path: string): unknown => {
+const walk = (json: Record<string, unknown>, path: string): unknown => {
   const parts = path.split('.')
   const subJson = json[parts[0]]
   if (parts.length > 1) {
-    return walk(subJson, parts.slice(1).join('.'))
+    if (typeof subJson !== 'object' || subJson === null || Array.isArray(subJson)) {
+      return undefined
+    }
+    return walk(subJson as Record<string, unknown>, parts.slice(1).join('.'))
   }
   return subJson
 }
@@ -37,7 +40,7 @@ const extractData = (msg: parsedMessage, accessor: string) => {
 }
 
 const extractNested = (obj: object) => {
-  let output: any[] = []
+  let output: unknown[] = []
   Object.entries(obj).forEach(([key, val]) => {
     if (typeof val === 'object' && !Array.isArray(val)) {
       output = [...output, ...extractNested(val).map((p) => `${key}.${p}`)]
@@ -53,7 +56,7 @@ const extractPaths = (obj: parsedMessage) => [
 
 type parsedMessage = {
   id: string
-  data: object
+  data: Record<string, unknown>
   published: Date
   attrs: Record<string, string>
 }

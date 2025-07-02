@@ -24,7 +24,7 @@ export type receivedMessage = z.infer<typeof ReceivedMessageSchema>
 export type Api = GetApiType<
   {
     listTopics: () => Promise<TopicHierarchy[]>
-    sendOnTopic: (name: string, payload: string, attrs: Record<string, string>) => Promise<void>
+    sendOnTopic: (name: string, payload: object, attrs: Record<string, string>) => Promise<void>
     resetSubscriptions: () => void
     storageGet: (key: string) => Promise<unknown>
     storageSet: (key: string, data: object) => Promise<void>

@@ -2,7 +2,7 @@ import { Message, PubSub, Subscription } from '@google-cloud/pubsub'
 import { BrowserWindow, Menu, app } from 'electron'
 import { createIpcMain } from 'electron-typescript-ipc'
 import path from 'node:path'
-//@ts-expect-error
+//@ts-expect-error squirrel doesn't have types
 import started from 'electron-squirrel-startup'
 import { Api, TopicHierarchy } from './ipc-api'
 

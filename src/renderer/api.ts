@@ -1,8 +1,9 @@
 import { z } from 'zod'
 
+export const MessageSchema = z.object({})
 export const HistoryItemSchema = z.object({
   id: z.string(),
-  payload: z.object({}).passthrough(),
+  payload: MessageSchema.passthrough(),
   attrs: z.array(
     z.object({
       key: z.string(),
@@ -12,6 +13,7 @@ export const HistoryItemSchema = z.object({
 })
 
 export type HistoryItem = z.infer<typeof HistoryItemSchema>
+export type Message = z.infer<typeof MessageSchema>
 
 export type TabType = 'sub' | 'topic'
 
