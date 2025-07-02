@@ -1,7 +1,7 @@
 {
   "name": "pubsub-compass",
   "productName": "pubsub-compass",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "a pub/sub GUI emulating Mongo Compass",
   "main": ".vite/build/main.js",
   "scripts": {
@@ -29,8 +29,9 @@
     "@electron-forge/plugin-vite": "7.8.1",
     "@electron-forge/publisher-github": "7.8.1",
     "@electron/fuses": "1.8.0",
+    "@electron/remote": "^2.1.2",
     "@types/electron-json-storage": "4.5.4",
-    "@types/react-dom": "18.2.18",
+    "@types/react-dom": "^19.1.0",
     "@typescript-eslint/eslint-plugin": "^8.35.1",
     "@typescript-eslint/parser": "^8.35.1",
     "electron": "^37.1.0",
@@ -46,15 +47,14 @@
     "vite": "5.4.19"
   },
   "dependencies": {
-    "@electron/remote": "^2.1.2",
-    "@emotion/react": "^11.10.0",
-    "@emotion/styled": "^11.10.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@google-cloud/pubsub": "4.1.1",
-    "@mui/icons-material": "^5.10.3",
-    "@mui/material": "^5.10.1",
+    "@mui/icons-material": "^7.2.0",
+    "@mui/material": "^7.2.0",
     "electron-squirrel-startup": "1.0.1",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "zod": "3.22.4"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "zod": "3.25.67"
   }
 }

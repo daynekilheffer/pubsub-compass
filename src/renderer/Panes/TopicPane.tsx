@@ -1,5 +1,3 @@
-/* eslint import/no-unresolved: off */
-import PropTypes from 'prop-types'
 import { FormEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -18,7 +16,7 @@ const createStorage = (tabName: string) => {
 }
 
 const useHistoryStorage = (tabName: string) => {
-  const historyStorage = useRef<ReturnType<typeof createStorage>>()
+  const historyStorage = useRef<ReturnType<typeof createStorage>>(undefined)
   if (!historyStorage.current) {
     historyStorage.current = createStorage(tabName)
   }
@@ -202,10 +200,4 @@ function Attribute({
       </IconButton>
     </Box>
   )
-}
-Attribute.propTypes = {
-  attrKey: PropTypes.string,
-  value: PropTypes.string,
-  onChange: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
 }

@@ -20,7 +20,7 @@ self.MonacoEnvironment = {
 
 const Editor = ({ value, onChange }: { value: string; onChange: (val: string) => void }) => {
   const elemRef = useRef<HTMLDivElement>(null)
-  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>()
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>(undefined)
 
   const changeListener = useRef(onChange)
   changeListener.current = onChange
