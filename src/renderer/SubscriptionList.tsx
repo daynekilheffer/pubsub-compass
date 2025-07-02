@@ -1,4 +1,6 @@
-import { Divider } from '@mui/material'
+import Search from '@mui/icons-material/Search'
+import { Box, Divider, TextField } from '@mui/material'
+import { useState } from 'react'
 import { Subscription, useSubscriptions } from './PubSubDataAccess'
 import RailList, { RailListItem } from './RailList'
 import { useTabManager } from './TabManager'
@@ -8,6 +10,7 @@ const useSubscriptionPins = createPinManager('subscription')
 function SubscriptionList() {
   const subs = useSubscriptions()
   const [setTab] = useTabManager()
+  const [searchTerm, setSearchTerm] = useState('')
 
   const [pinnedSubs, togglePinned] = useSubscriptionPins()
 
@@ -15,7 +18,7 @@ function SubscriptionList() {
     if (pinnedSubs.includes(sub.name)) {
       acc.pinned ??= []
       acc.pinned.push(sub)
-    } else {
+    } else if (sub.name.toLowerCase().includes(searchTerm.toLowerCase())) {
       acc.unpinned ??= []
       acc.unpinned.push(sub)
     }
@@ -24,6 +27,22 @@ function SubscriptionList() {
 
   return (
     <RailList>
+      {subs.length > 0 && (
+        <Box p={2}>
+          <TextField
+            id="search-subscriptions"
+            label="Search"
+            variant="outlined"
+            type="search"
+            size="small"
+            fullWidth
+            onChange={(e) => setSearchTerm(e.target.value)}
+            InputProps={{
+              startAdornment: <Search />,
+            }}
+          />
+        </Box>
+      )}
       {pinned?.map((sub) => (
         <RailListItem
           key={sub.name}
