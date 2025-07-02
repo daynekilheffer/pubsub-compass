@@ -10,9 +10,9 @@ import TabManager from './TabManager'
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#EBA550',
+      main: darken('#EBA550', 0.2),
       light: lighten('#EBA550', 0.1),
-      dark: darken('#EBA550', 0.1),
+      dark: darken('#EBA550', 0.3),
     },
     secondary: {
       main: '#cb5d19',
@@ -24,7 +24,7 @@ const theme = createTheme({
     },
     divider: alpha('#EBA550', 0.4),
     text: {
-      primary: darken('#EBA550', 0.55),
+      primary: darken('#EBA550', 0.65),
     },
   },
   shape: {

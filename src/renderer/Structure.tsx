@@ -14,13 +14,10 @@ export function Rail({ children }: { children: React.ReactNode }) {
     <Drawer
       variant="permanent"
       anchor="left"
-      sx={{
-        width: 320,
-      }}
       PaperProps={{
         sx: {
           backgroundColor: alpha(palette.background.default, 0.5),
-          maxWidth: 320,
+          width: 320,
         },
       }}
     >
