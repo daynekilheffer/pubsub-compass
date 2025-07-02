@@ -39,6 +39,7 @@ const Editor = ({ value, onChange }: { value: string; onChange: (val: string) =>
       minimap: { enabled: false },
       overviewRulerLanes: 0,
       tabSize: 2,
+      fontSize: 14,
     })
     editorRef.current = editor
     editor.onDidChangeModelContent(() => {
