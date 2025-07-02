@@ -2,6 +2,8 @@ import { Message, PubSub, Subscription } from '@google-cloud/pubsub'
 import { BrowserWindow, Menu, app } from 'electron'
 import { createIpcMain } from 'electron-typescript-ipc'
 import path from 'node:path'
+//@ts-expect-error
+import started from 'electron-squirrel-startup'
 import { Api, TopicHierarchy } from './ipc-api'
 
 import { applicationMenu } from './app-menu'
@@ -9,9 +11,7 @@ import storage from './promising-storage'
 
 const ipcMain = createIpcMain<Api>()
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-// eslint-disable-next-line global-require
-if (require('electron-squirrel-startup')) {
+if (started) {
   app.quit()
 }
 
