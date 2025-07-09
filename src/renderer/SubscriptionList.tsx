@@ -37,8 +37,10 @@ function SubscriptionList() {
             size="small"
             fullWidth
             onChange={(e) => setSearchTerm(e.target.value)}
-            InputProps={{
-              startAdornment: <Search />,
+            slotProps={{
+              input: {
+                startAdornment: <Search />,
+              },
             }}
           />
         </Box>

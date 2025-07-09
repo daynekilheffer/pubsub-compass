@@ -1,10 +1,4 @@
-import {
-  Button,
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemText,
-} from '@mui/material'
+import { Button, Drawer, List, ListItemButton, ListItemText } from '@mui/material'
 import { HistoryItem } from '../api'
 
 export default function TopicHistoryDrawer({
@@ -13,38 +7,36 @@ export default function TopicHistoryDrawer({
   history,
   onClearHistory,
   onLoadHistoryItem,
-}: { open: boolean; onClose: () => void; history: HistoryItem[]; onClearHistory: () => void; onLoadHistoryItem: (h: HistoryItem) => void }) {
+}: {
+  open: boolean
+  onClose: () => void
+  history: HistoryItem[]
+  onClearHistory: () => void
+  onLoadHistoryItem: (h: HistoryItem) => void
+}) {
   return (
     <Drawer
-      PaperProps={{
-        sx: { width: '350px' },
+      slotProps={{
+        paper: {
+          sx: { width: 400 },
+        },
       }}
       anchor="right"
       open={open}
-      onClose={(evt, reason) => reason === 'backdropClick' && onClose()}
+      onClose={(_evt, reason) => reason === 'backdropClick' && onClose()}
     >
       <List>
         {history.reverse().map((h) => (
-          <ListItemButton
-            key={h.id}
-            dense
-            onClick={() => onLoadHistoryItem(h)}
-          >
+          <ListItemButton key={h.id} dense onClick={() => onLoadHistoryItem(h)}>
             <ListItemText
-              secondary={
-                h.attrs.length > 0
-                  ? h.attrs.map((a) => `${a.key}=${a.value}`).join(' ')
-                  : undefined
-              }
+              secondary={h.attrs.length > 0 ? h.attrs.map((a) => `${a.key}=${a.value}`).join(' ') : undefined}
             >
               {JSON.stringify(h.payload, null, 1)}
             </ListItemText>
           </ListItemButton>
         ))}
       </List>
-      {history.length > 0 && (
-        <Button onClick={onClearHistory}>clear history</Button>
-      )}
+      {history.length > 0 && <Button onClick={onClearHistory}>clear history</Button>}
     </Drawer>
   )
 }

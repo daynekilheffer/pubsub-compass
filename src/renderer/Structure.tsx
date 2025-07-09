@@ -1,8 +1,9 @@
 import { Box, Drawer, alpha, useTheme } from '@mui/material'
 
 export default function Frame({ children }: { children: React.ReactNode }) {
+  const { palette } = useTheme()
   return (
-    <Box display="grid" gridTemplateColumns="320px 1fr">
+    <Box display="grid" gridTemplateColumns="320px 1fr" bgcolor={alpha(palette.background.default, 0.2)} height="100vh">
       {children}
     </Box>
   )
@@ -14,10 +15,12 @@ export function Rail({ children }: { children: React.ReactNode }) {
     <Drawer
       variant="permanent"
       anchor="left"
-      PaperProps={{
-        sx: {
-          backgroundColor: alpha(palette.background.default, 0.5),
-          width: 320,
+      slotProps={{
+        paper: {
+          sx: {
+            backgroundColor: alpha(palette.background.default, 0.4),
+            width: 320,
+          },
         },
       }}
     >

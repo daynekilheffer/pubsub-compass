@@ -126,7 +126,7 @@ export default function TopicPane({ tab, active }: { tab: TabState; active: bool
       <form onSubmit={submit}>
         <Box display="flex">
           <Box flexGrow={1} pr={2}>
-            <Typography paragraph>Message</Typography>
+            <Typography component="p">Message</Typography>
             <Editor value={text} onChange={(v) => setText(v)} />
             <Box display="flex" justifyContent="space-between" mt={2}>
               <Box>
@@ -141,7 +141,7 @@ export default function TopicPane({ tab, active }: { tab: TabState; active: bool
             </Box>
           </Box>
           <Box flexBasis="300px" p="0 8px 0 8px">
-            <Typography paragraph>Attributes</Typography>
+            <Typography component="p">Attributes</Typography>
             {attrs.map((attr, idx) => (
               <Box display="flex" alignContent="space-between">
                 <Attribute
