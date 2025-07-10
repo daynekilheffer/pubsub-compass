@@ -2,7 +2,10 @@ import { FormEventHandler, useCallback, useEffect, useRef, useState } from 'reac
 
 import DeleteIcon from '@mui/icons-material/Delete'
 import HistoryIcon from '@mui/icons-material/History'
-import { Box, Button, FormHelperText, IconButton, TextField, Typography } from '@mui/material'
+import AddIcon from '@mui/icons-material/Add'
+import DataObjectIcon from '@mui/icons-material/DataObject'
+import SendIcon from '@mui/icons-material/Send'
+import { Box, Button, FormHelperText, IconButton, Stack, TextField, Typography } from '@mui/material'
 import { send as topicSend } from '../api/topics'
 import BasePane from './BasePane'
 import TopicHistory from './TopicHistoryDrawer'
@@ -126,22 +129,35 @@ export default function TopicPane({ tab, active }: { tab: TabState; active: bool
       <form onSubmit={submit}>
         <Box display="flex">
           <Box flexGrow={1} pr={2}>
-            <Typography component="p">Message</Typography>
+            <Typography component="p" gutterBottom>
+              Message
+            </Typography>
             <Editor value={text} onChange={(v) => setText(v)} />
             <Box display="flex" justifyContent="space-between" mt={2}>
               <Box>
-                <IconButton size="small" onClick={() => setHistoryOpen(true)} disabled={history.length === 0}>
-                  <HistoryIcon />
-                </IconButton>
+                <Button
+                  color="primary"
+                  onClick={() => setHistoryOpen(true)}
+                  disabled={history.length === 0}
+                  startIcon={<HistoryIcon />}
+                >
+                  History
+                </Button>
               </Box>
-              <Box>
-                <Button onClick={() => formatAndSave(text)}>Format</Button>
-                <Button type="submit">Send</Button>
-              </Box>
+              <Stack direction="row" spacing={1}>
+                <Button onClick={() => formatAndSave(text)} startIcon={<DataObjectIcon />}>
+                  Format
+                </Button>
+                <Button type="submit" startIcon={<SendIcon />}>
+                  Send
+                </Button>
+              </Stack>
             </Box>
           </Box>
           <Box flexBasis="300px" p="0 8px 0 8px">
-            <Typography component="p">Attributes</Typography>
+            <Typography component="p" gutterBottom>
+              Attributes
+            </Typography>
             {attrs.map((attr, idx) => (
               <Box display="flex" alignContent="space-between">
                 <Attribute
@@ -152,7 +168,9 @@ export default function TopicPane({ tab, active }: { tab: TabState; active: bool
                 />
               </Box>
             ))}
-            <Button onClick={onAddAttribute}>Add</Button>
+            <Button onClick={onAddAttribute} startIcon={<AddIcon />}>
+              Add
+            </Button>
           </Box>
         </Box>
         {error && <FormHelperText error>{error.message}</FormHelperText>}
@@ -186,7 +204,7 @@ function Attribute({
   onDelete: () => void
 }) {
   return (
-    <Box display="inline-flex" m="0 0 4px 0">
+    <Box display="inline-flex" alignItems="center" m="0 0 4px 0">
       <TextField
         label="key"
         value={attrKey}
@@ -195,7 +213,7 @@ function Attribute({
         onChange={(e) => onChange(e.target.value, value)}
       />
       <TextField label="value" value={value} size="small" onChange={(e) => onChange(attrKey, e.target.value)} />
-      <IconButton aria-label="delete" size="small" sx={{ marginLeft: 1 }} onClick={onDelete}>
+      <IconButton aria-label="delete" color="error" size="small" sx={{ marginLeft: 1 }} onClick={onDelete}>
         <DeleteIcon />
       </IconButton>
     </Box>
