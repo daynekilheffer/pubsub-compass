@@ -3,7 +3,12 @@ import { Box, Drawer, alpha, useTheme } from '@mui/material'
 export default function Frame({ children }: { children: React.ReactNode }) {
   const { palette } = useTheme()
   return (
-    <Box display="grid" gridTemplateColumns="320px 1fr" bgcolor={alpha(palette.background.default, 0.2)} height="100vh">
+    <Box
+      display="grid"
+      gridTemplateColumns="320px calc(100% - 320px)"
+      bgcolor={alpha(palette.background.default, 0.2)}
+      height="100vh"
+    >
       {children}
     </Box>
   )

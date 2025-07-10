@@ -132,32 +132,36 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabStat
 
   const table = (
     <>
-      <Typography paragraph>Messages</Typography>
-      <Table>
-        <TableHead>
-          <TableRow>
-            {cols.map((col) => (
-              <TableCell key={col}>{col}</TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {messages.map((msg) => (
-            <TableRow key={msg.id}>
+      <Typography component="p" gutterBottom>
+        Messages
+      </Typography>
+      <Box width="100%" overflow="scroll">
+        <Table>
+          <TableHead>
+            <TableRow>
               {cols.map((col) => (
-                <TableCell key={col}>{JSON.stringify(extractData(msg, col))}</TableCell>
+                <TableCell key={col}>{col}</TableCell>
               ))}
             </TableRow>
-          ))}
-          {messages.length === 0 && (
-            <TableRow>
-              <TableCell>
-                <Typography variant="body2">no data</Typography>
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {messages.map((msg) => (
+              <TableRow key={msg.id}>
+                {cols.map((col) => (
+                  <TableCell key={col}>{JSON.stringify(extractData(msg, col))}</TableCell>
+                ))}
+              </TableRow>
+            ))}
+            {messages.length === 0 && (
+              <TableRow>
+                <TableCell>
+                  <Typography variant="body2">no data</Typography>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Box>
     </>
   )
 
