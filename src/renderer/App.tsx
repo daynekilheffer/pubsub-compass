@@ -35,6 +35,17 @@ const theme = createTheme({
     fontSize: 12,
     fontFamily: '"Noto Sans Indic Siyaq Numbers", sans-serif',
   },
+  components: {
+    MuiTab: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          minHeight: 48,
+          fontSize: '.8rem',
+        },
+      },
+    },
+  },
 })
 
 function App() {
