@@ -9,7 +9,7 @@ import { createPinManager } from './TopicListManager'
 const useSubscriptionPins = createPinManager('subscription')
 function SubscriptionList() {
   const subs = useSubscriptions()
-  const [setTab] = useTabManager()
+  const { setTab } = useTabManager()
   const [searchTerm, setSearchTerm] = useState('')
 
   const [pinnedSubs, togglePinned] = useSubscriptionPins()

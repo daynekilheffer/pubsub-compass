@@ -10,7 +10,7 @@ import { Topic } from './api/topics'
 const useTopicPins = createPinManager('topics')
 function TopicList() {
   const topics = useTopics()
-  const [setTab] = useTabManager()
+  const { setTab } = useTabManager()
   const [searchTerm, setSearchTerm] = useState('')
 
   const [pinnedTopics, togglePinned] = useTopicPins()

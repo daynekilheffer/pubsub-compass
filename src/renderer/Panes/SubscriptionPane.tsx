@@ -14,9 +14,11 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TabState } from '../api'
 import { receivedMessage, watch } from '../api/subscriptions'
+import { setActivity as setAppActivity } from '../api/app'
+import { useTabManager } from '../TabManager'
 import BasePane from './BasePane'
 
 const walk = (json: Record<string, unknown>, path: string): unknown => {
@@ -71,7 +73,7 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabStat
   const [messages, setMessages] = useState<parsedMessage[]>([])
   const [settings, setSettings] = useState<Settings>({ fields: [], editFields: [] })
   const [editingSettings, setEditingSettings] = useState(false)
-  const toggleActivity = useCallback((_: boolean) => undefined, [])
+  const { setTabActivity } = useTabManager()
 
   useEffect(() => {
     if (watching) {
@@ -85,20 +87,23 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabStat
           },
           ...msgs,
         ])
-        // this stops and restarts the watcher a lot as we jump tabs, would rather it didn't :thinking:
+        // Set activity indicator if the tab is not currently active
         if (!active) {
-          toggleActivity(true)
+          setTabActivity(tab.id, true)
+          setAppActivity(true)
         }
       }
       return watch(tab.name, listener)
     }
-  }, [tab.name, active, watching, toggleActivity])
+  }, [tab.name, tab.id, active, watching, setTabActivity])
 
   useEffect(() => {
     if (active) {
-      toggleActivity(false)
+      // Clear activity indicator when tab becomes active
+      setTabActivity(tab.id, false)
+      setAppActivity(false)
     }
-  }, [active, toggleActivity])
+  }, [active, tab.id, setTabActivity])
 
   useEffect(() => {
     const to = setTimeout(() => {
