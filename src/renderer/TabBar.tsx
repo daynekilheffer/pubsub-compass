@@ -1,6 +1,6 @@
 import React from 'react'
 import { Badge, Box, Tab, Tabs, IconButton, Chip } from '@mui/material'
-import { Close as CloseIcon } from '@mui/icons-material'
+import CloseIcon from '@mui/icons-material/Close'
 import { useTabManager, useActiveTab, useTabs } from './TabManager'
 
 const TabBar: React.FC = () => {
