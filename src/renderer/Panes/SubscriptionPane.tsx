@@ -17,7 +17,6 @@ import {
 import { useEffect, useState } from 'react'
 import { TabState } from '../api'
 import { receivedMessage, watch } from '../api/subscriptions'
-import { setActivity as setAppActivity } from '../api/app'
 import { useTabManager } from '../TabManager'
 import BasePane from './BasePane'
 
@@ -90,7 +89,6 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabStat
         // Set activity indicator if the tab is not currently active
         if (!active) {
           setTabActivity(tab.id, true)
-          setAppActivity(true)
         }
       }
       return watch(tab.name, listener)
@@ -101,7 +99,6 @@ export default function SubscriptionPane({ tab, active = false }: { tab: TabStat
     if (active) {
       // Clear activity indicator when tab becomes active
       setTabActivity(tab.id, false)
-      setAppActivity(false)
     }
   }, [active, tab.id, setTabActivity])
 

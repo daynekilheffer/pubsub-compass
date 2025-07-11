@@ -1,5 +1,6 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { TabState, TabType } from './api'
+import { setActivity as setAppActivity } from './api/app'
 
 type ContextValue = {
   tabs: TabState[]
@@ -19,6 +20,17 @@ export const TAB_TYPES = {
 export default function TabManager({ children }: { children: React.ReactNode }) {
   const [tabs, setTabs] = useState<TabState[]>([])
   const [activeTabId, setActiveTabId] = useState<string | null>(null)
+
+  const previousTabs = React.useRef(tabs)
+  if (tabs !== previousTabs.current) {
+    console.log('tabs changed')
+  }
+  previousTabs.current = tabs
+
+  const hasAnyActivity = tabs.some((tab) => tab.hasActivity)
+  useEffect(() => {
+    setAppActivity(hasAnyActivity)
+  }, [hasAnyActivity])
 
   const setTab = useCallback((name: string, type: TabType) => {
     const tabId = `${type}-${name}`
@@ -67,12 +79,20 @@ export default function TabManager({ children }: { children: React.ReactNode }) 
   }, [])
 
   const setTabActivity = useCallback((id: string, hasActivity: boolean) => {
-    setTabs((currentTabs) => currentTabs.map((tab) => (tab.id === id ? { ...tab, hasActivity } : tab)))
+    setTabs((currentTabs) => {
+      const existingTab = currentTabs.find((tab) => tab.id === id)
+      if (!existingTab) {
+        console.warn(`Tab with id ${id} not found when setting activity`)
+        return currentTabs
+      }
+      if (existingTab.hasActivity === hasActivity) {
+        return currentTabs
+      }
+      return currentTabs.map((tab) => (tab.id === id ? { ...tab, hasActivity } : tab))
+    })
   }, [])
 
-  const activeTab = useMemo(() => {
-    return tabs.find((tab) => tab.id === activeTabId) || null
-  }, [tabs, activeTabId])
+  const activeTab = tabs.find((tab) => tab.id === activeTabId) || null
 
   const value = useMemo(
     () => ({
